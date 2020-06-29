@@ -5,7 +5,8 @@
 ### Youtube video
 [Link](https://www.youtube.com/watch?v=bKjitZ3wLoc)
 
-Mostly why I like this video is because it highlights what I like about the presenter **Kyle Hill**.  He is a little *eccentric* and not afraid to be a little weird.
+Mostly why I like this video is because it highlights what I like about the presenter __Kyle Hill__.  He is a little *eccentric* and not afraid to be a little weird.
+
 ---
 ### Unorderd List
 3 of my favorite video games
@@ -17,7 +18,7 @@ Mostly why I like this video is because it highlights what I like about the pres
 ### Ordered List
 3 of my favorite pizza toppings
 1. Pepperoni
-2. Pinapple
+2. Pineapple
 3. Jalapenos
 
 ---
@@ -33,3 +34,4 @@ First Contact | TNG | A
 > Captain Jean-Luc Picard: The line must be drawn here! 
 > This far, no further!
 > And I will make them pay for what they've done!
+
