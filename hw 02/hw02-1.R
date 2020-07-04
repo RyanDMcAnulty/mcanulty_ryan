@@ -79,4 +79,4 @@ class(species_name)
 # Check class of is_mammal
 class(is_mammal)
 
-##
+###
