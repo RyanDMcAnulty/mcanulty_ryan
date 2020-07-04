@@ -1,3 +1,5 @@
+# Ryan McAnulty
+# HW 02 Part 2: Vectors
 ## 2.1 Create a vector
 
 ## 2.2 Vector Types
@@ -85,4 +87,4 @@ with_between_50000_and_75000 <- cell_counts_with_pplo > 50000 & cell_counts_with
 # Use that logical vector to show the days and log values from `cultures_with_pplo`.
 cell_counts_with_pplo[with_between_50000_and_75000]
 
-#
+###
