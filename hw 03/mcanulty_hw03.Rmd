@@ -6,15 +6,22 @@ output:html_notebook
 editor_options:
   chunk_output_type:inline
 ---
+## HW 03
+## Part 1: An R Notebook Case Study
 
+## Loads tidyverse, kitr, and xtable
 ```{r}
 library(tidyverse)
+library(knitr)
+library(xtable)
 ```
 
+## Displays anscombe
 ```{r}
 anscombe
 ```
 
+## Creates dataset ansc
 ```{r}
 ansc <- 
   bind_cols(
@@ -30,10 +37,12 @@ ansc <-
   as_tibble()
 ```
 
+## Displays dataset ansc
 ```{r}
 ansc
 ```
 
+## Runs and displays a summary data set of a statistical analysis of ansc datasest
 ```{r}
 ansc %>% 
   group_by(dataset) %>% 
@@ -44,4 +53,65 @@ ansc %>%
     stdev_y = sd(y)
   )
 ```
+
+## Creates and displays plots of ansc at two plots per column
+```{r}
+ansc %>% ggplot(aes(x,y, color = dataset)) +
+  geom_point() +
+facet_wrap(~dataset, ncol = 2)
+```
+
+## Part 2: Two more R Markdown tricks
+
+## Displays frist six rows and header column names of dataset iris
+```{r}
+head(iris)
+```
+
+## Create table of iris head, renaming column names and aligning columns
+```{r}
+kable(head(iris),
+      align= c("l", "c", "r", "c","l"),
+      col.names = c("Sepal Length", "Sepal Width", "Sepal Length", "Sepal Width", "Species"))
+```
+
+## Display head of dataset airquality
+```{r}
+head(airquality)
+```
+
+## Create a table of head of airquality, renaming column names and aligning columns
+```{r}
+kable(head(airquality),
+      align= c("r", "r", "c", "c","l","l"),
+      col.names = c("Ozone (ppb)", "Solar R (lang)", "Wind (mph)", "Temp (°F)", "Month", "Day"))
+```
+
+## Create value chicks_lm from dataset  chickwts and running a summary of it
+```{r}
+chicks_lm <- lm(weight ~ feed, data = chickwts)
+
+summary(chicks_lm)
+```
+
+## Attempt to form data set of chicks_lm.  Displays Error in as.data.frame.default(x)
+## Cannot coerce class '"lm"' to a data frame.  If you try to do just the head from chickwts, it spits out
+## values.  I speculate that kable() runs the data the isn't condusive with the lm function.
+```{r}
+kable(chicks_lm)
+```
+
+## Running chicks_lm with xtable
+```{r}
+xtable(chicks_lm) %>% kable()
+```
+
+## Run xtable and kable on trees data set to determine if Girth is a function of Height
+```{r}
+trees_lm <- lm(Girth ~ Height, data = trees)
+
+xtable((trees_lm)) %>% kable()
+```
+
+^[This is a footnote]
 
