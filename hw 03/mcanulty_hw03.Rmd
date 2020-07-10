@@ -113,5 +113,8 @@ trees_lm <- lm(Girth ~ Height, data = trees)
 xtable((trees_lm)) %>% kable()
 ```
 
+## Bernoulli's Equation equation using LaTeX
+$$p = \frac{\1}{\2}ρ + ρgh = C$$
+
 ^[This is a footnote]
 
