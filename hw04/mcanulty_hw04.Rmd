@@ -205,32 +205,80 @@ Using a function like this, will display a logic plot with two variables, TRUE(i
 
 ### Section 3.5: Facets
 
+## Using facet wrap to show displ vs. hwy for all classes in mpg in 2 rows
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap(~ class, nrow = 2)
+```
 
+## Using facet grid of displ vs. hwy along with drv and cyl
+```{r}
+ggplot(data = mpg) +
+   geom_point(mapping = aes(x = displ, y = hwy)) +
+   facet_grid(drv ~ cyl)
+```
 
 #### Section 3.5 questions
 
 **1:** What happens if you facet on a continuous variable? **Note:** Write a prediction, then make and run your code chunk.
-
+Prediction: It will produce a gradient similar to previous plots
+```{r}
+ggplot(data = mpg) +
+   geom_point(mapping = aes(x = displ, y = hwy)) +
+   facet_wrap(~ cty, nrow = 2)
+```
+I was wrong, it plotted the same
 
 
 **2:** What do the empty cells in plot with `facet_grid(drv ~ cyl)` mean? How do they relate to this plot?
-
+That there are no values to place in those cells.  In this case, there are no vehicles that have 5 cylinders AND are 4 wheel drive or rear wheel drive or a 4 cylinder that is rear wheel drive.
 
 
 **3:** What plots does the following code make? What does `.` do?
+## Facet grid with displ vs. hwy and drv in rows and . in columns
+```{r}
+ggplot(data = mpg) +
+   geom_point(mapping = aes(x = displ, hwy)) +
+   facet_grid(drv ~ .)
+```
+This makes a plot without a facet in the columns
 
-
+## Facet grid with displ vs. hwy and . in rows and cyl in columns
+```{r}
+ggplot(data = mpg) +
+   geom_point(mapping = aes(x = displ, hwy)) +
+   facet_grid(. ~ cyl)
+```
+This makes the plot without a facet in the rows
 
 **4:** Take the first faceted plot below. What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? How might the balance change if you had a larger dataset?
-
-
+```{r}
+ggplot(dat = mpg) +
+   geom_point(mapping = aes(x = displ, y = hwy)) +
+   facet_wrap(~ class, nrow = 2)
+```
+Some advantages are that the plots are less cluttered, if data sets overlap, you can't see that.  Shows in a specific category.
+Disadvantages are that it is a little harder to compare to different data points, takes up more room.
+When the there are more data points, the advantages of separation and more space of faceting would become more pronounced.
 
 **5:** Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have nrow and ncol argument?
+?facet_wrap
 
+nrow sets the number of rows.
+ncol sets the number of columns.
+Other controlers are scales, shrink, labeller, as.table, switch, drop, dir, and strip.position.
+The number of rows and columns in facet_grid is determined by the number of different values of the data points.  For example year has 1999 and 2008, so it would have 2 rows or columns. 
 
 **6:** When using `facet_grid()` you should usually put the variable with more unique levels in the columns. Why?
 
+To take up less vertical space in the plot; the y-axis would be "smooshed" and be reader to read
+.
 ### Section 3.6: Geometric objects
+## Scatter plot of displ vs. hwy
+```{r}
+
+```
 
 
 
