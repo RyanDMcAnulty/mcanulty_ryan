@@ -47,7 +47,7 @@ Answer the questions *completely.* Some answers will require you to write code i
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy))
 ```
-Tis displays a scatterplot of mpg with engine displacement vs. hwy fuel economy
+This displays a scatterplot of mpg with engine displacement vs. hwy fuel economy
 
 
 **2:** How many rows are in `mpg`? How many columns? **Hint:** Use the `dim()` function. Type `dim()` in the console to learn what `dim()` does.
@@ -116,7 +116,7 @@ ggplot(data = mpg) +
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
 ```   
-To manually set an aesthetic value, it has to be outside of the first set of parentheses.  Inside the parentheses, ggplot sets the third variable as a legend and in this case, named blue/
+To manually set an aesthetic value, it has to be outside of the first set of parentheses.  Inside the parentheses, ggplot sets the third variable as a legend and in this case, named blue.
 
 **2:** Which variables in `mpg` are categorical? Which variables are continuous? (*Hint:* type `?mpg` to read the documentation for the dataset). How can you see this information when you run mpg?
 
@@ -198,7 +198,7 @@ Stroke seems to be the "thickness" of the data point, like a thicker paint brush
 ## Using variable name other than a variable name
 ```{r}
  ggplot(data = mpg) +
-   geom_point(mapping = aes(x = displ, y =hwy, color = displ < 5, stroke = 1))
+   geom_point(mapping = aes(x = displ, y = hwy, color = displ < 5, stroke = 1))
 ```
 
 Using a function like this, will display a logic plot with two variables, TRUE(if the variable value satisfies the function) or False (if it does not).
@@ -228,7 +228,7 @@ ggplot(data = mpg) +
    geom_point(mapping = aes(x = displ, y = hwy)) +
    facet_wrap(~ cty, nrow = 2)
 ```
-I was wrong, it plotted the same
+I was wrong, it plotted correctly.
 
 
 **2:** What do the empty cells in plot with `facet_grid(drv ~ cyl)` mean? How do they relate to this plot?
@@ -272,7 +272,7 @@ The number of rows and columns in facet_grid is determined by the number of diff
 
 **6:** When using `facet_grid()` you should usually put the variable with more unique levels in the columns. Why?
 
-To take up less vertical space in the plot; the y-axis would be "smooshed" and be reader to read
+To take up less vertical space in the plot; the y-axis would be "smooshed" and be easier to read
 .
 ### Section 3.6: Geometric objects
 ## Scatter plot of displ vs. hwy using geom_point
@@ -373,6 +373,19 @@ It controls whether or not the confidence interval is shown around the trend lin
 
 **5:** Will these two graphs look different? Why/why not?
 No, they should do the same.  The first sets up the proper info in the ggplot line.  The second waits to do it in each geom.  The first is simply less typing/code.
+
+## First graph
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+```
+## Second graph
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
 
 **6:** Recreate the R code necessary to generate the following graphs. **Note:** Enter a separate code chunk for each graph, numbered 1 to 6, starting row-wise at upper left. 
 
@@ -483,7 +496,7 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
    geom_point()
 ```
 It is simply a plot of city fuel economy and highway fuel economy with overlapping and no real context.  This plot, as is, is not really saying anything.
-To improve, I would use "jitter" to prevent over lap.  Add color or shapes to the different classes or drive trains.  Perhaps add a treadline to show overall trend.   
+To improve, I would use "jitter" to prevent over lap of data points.  Add color or shapes to the different classes or drive trains.  Perhaps add a treadline to show overall trend.   
 
 **2:** What parameters to `geom_jitter()` control the amount of jittering?
 height and width control the amount of spread of the jitter. 
@@ -496,13 +509,18 @@ Geom_count displays all points as is, but counts how many points, if any, are oc
 
 **4:** What is the default position adjustement for `geom_boxplot()`? Create a visualization of the `mpg` dataset that demonstrates it.
 
+The default position adjustment for geom_boxplot() is "dodge2"
+
+## Plot with default position aesthetic
 ```{r}
-ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
   geom_boxplot()
 ```
+
+## A plot using "dodge2" showing that manually inserting "dodge2" is the same plot
 ```{r}
-ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
-  geom_boxplot(mapping = aes(position = position_dodge2(width = 0.8)))
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_boxplot(position = "dodge2")
 ```
 
 
