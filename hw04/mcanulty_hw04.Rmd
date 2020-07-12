@@ -275,50 +275,149 @@ The number of rows and columns in facet_grid is determined by the number of diff
 To take up less vertical space in the plot; the y-axis would be "smooshed" and be reader to read
 .
 ### Section 3.6: Geometric objects
-## Scatter plot of displ vs. hwy
+## Scatter plot of displ vs. hwy using geom_point
 ```{r}
-
+ggplot(data = mpg) +
+   geom_point(mapping = aes(x = displ, y = hwy))
+```
+## Trend line plot of displ vs. hwy using geom_smooth
+```{r}
+ggplot(data = mpg) +
+   geom_smooth(mapping = aes(x = displ, y = hwy))
 ```
 
+## Using linetype to display a third variable
+```{r}
+ggplot(data = mpg) +
+   geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+```
 
+## Trendline plot of displ vs. hwy
+```{r}
+ggplot(data = mpg) +
+   geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+## Using group to leave out the legend for drv
+```{r}
+ggplot(data = mpg) +
+   geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+```
+
+## Using show.legend = FALSE to leave out legend, but showing different colors of drv
+```{r}
+ggplot(data = mpg) +
+   geom_smooth(
+      mapping = aes(x = displ, y = hwy, color = drv),
+      show.legend = FALSE
+   )
+```
+
+## Showing both scatter plot and trendline plot for displ vs hwy in same plot
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+## Same plot, but with less code
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+   geom_point() +
+   geom_smooth()
+```
+
+## Same plot, but with color asethetic added to scatter plot only
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+   geom_point(mapping = aes(color = class)) +
+   geom_smooth()
+```
+
+## Using filter to single out the trend line for subcompact cars
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+   geom_point(mapping = aes(color = class)) +
+   geom_smooth(data = filter(mpg, class == "subcompact"), se = FALSE)
+```
 
 #### Section 3.6.1 Questions
 
 **1:** What geom would you use to draw a line chart? A boxplot? A histogram? An area chart? **Note:** You will have to make some types of these charts in Part 2 of this assignment.
+I would use geom_line for a line chart.
+geom_boxplot for a boxplot.
+geom_freqpoly for a histogram
+geom_ribbon for are an area chart
 
 
 **2:** Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
+It will display a chart with scatter points for displ and hwy with colored drv points and a legend for drv and also 3 trend lines but without a confidence interval displayed
 
+## Displaying discussed plot
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) +
+   geom_point() +
+   geom_smooth(se = FALSE)
+```
 
+I was correct
 
 **3:** What does `show.legend = FALSE` do? What happens if you remove it?
 **Note:** Skip the "Why do you think I used it earlier in the chapter?" question.
-
+Show.legend = FALSE tells the program to not display the legend.
+Leaving it out defaults to show.legend = TRUE and a legend displays.
 
 **4:** What does the `se` argument to `geom_smooth()` do?
+It controls whether or not the confidence interval is shown around the trend line.
 
 
 **5:** Will these two graphs look different? Why/why not?
-
+No, they should do the same.  The first sets up the proper info in the ggplot line.  The second waits to do it in each geom.  The first is simply less typing/code.
 
 **6:** Recreate the R code necessary to generate the following graphs. **Note:** Enter a separate code chunk for each graph, numbered 1 to 6, starting row-wise at upper left. 
 
 1: upper left.
-
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+   geom_point() +
+   geom_smooth(se = FALSE)
+```
 
 2: upper right.
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, group = drv)) +
+   geom_point() +
+   geom_smooth(se = FALSE)
+```
 
 
 3: middle left.
-
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, group = drv, color = drv)) +
+   geom_point() +
+   geom_smooth(se = FALSE)
+```
 
 4: middle right.
-
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+   geom_point(mapping = aes(color = drv)) +
+   geom_smooth(se = FALSE)
+```
 
 5: lower left.
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, group = drv)) +
+   geom_point(mapping = aes(color = drv)) +
+   geom_smooth(mapping = aes(linetype = drv), se = FALSE)
+```
 
 
 6: lower right. *Hint:* Read the help file for `geom_point`. Use `shape = 21`, `stroke = 2`, and `size = 3`.
+```{r}
+ggplot(data = mpg) + 
+   geom_point(mapping = aes(x = displ, y = hwy, group = drv, fill = drv), color = "white", shape = 21, stroke = 2, size = 3)
+```
 
 ### Section 3.7: Statistical transformations.
 
@@ -327,24 +426,102 @@ To take up less vertical space in the plot; the y-axis would be "smooshed" and b
 
 ### Section 3.8 Position adjustments
 
+## Displays bar chart of diamonds with color
+```{r}
+ggplot(data = diamonds) +
+   geom_bar(mapping = aes(x = cut, color = cut))
+
+```
+
+## Displays a bar chart of diamonds with fill
+```{r}
+ggplot(data = diamonds) +
+   geom_bar(mapping = aes(x = cut, fill = cut))
+```
+
+## Displays a bar chart of diamonds stacking cut and clarity
+
+```{r}
+ggplot(data = diamonds) +
+   geom_bar(mapping = aes(x = cut, fill = clarity))
+```
+
+## Displaying plot with identity to remove stacking with transluecent bars
+```{r}
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) + 
+  geom_bar(alpha = 1/5, position = "identity")
+```
+
+## Plot with identity to remove stacking with no fill
+```{r}
+ggplot(data = diamonds, mapping = aes(x = cut, colour = clarity)) + 
+  geom_bar(fill = NA, position = "identity")
+```
+
+## Plot using position set to fill
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+```
+
+## Using dodge to avoid stacking issue
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
+```
+
+## Using jitter to avoid overplotting
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), position = "jitter")
+```
 
 #### Section 3.8 Questions
-
 **1:** What is the problem with this plot? How could you improve it. *Hint:* Remember the size of the `mpg` data set from earlier in this exercise. Does the number of points seem correct? **Note:** Write the code to improve it. 
-
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+   geom_point()
+```
+It is simply a plot of city fuel economy and highway fuel economy with overlapping and no real context.  This plot, as is, is not really saying anything.
+To improve, I would use "jitter" to prevent over lap.  Add color or shapes to the different classes or drive trains.  Perhaps add a treadline to show overall trend.   
 
 **2:** What parameters to `geom_jitter()` control the amount of jittering?
-
+height and width control the amount of spread of the jitter. 
 
 **3:** Compare and contracts `geom_jitter()` with `geom_count()`.
 
+Both deal with solving Overplotting, but in different ways 
+Geom_jitter introduces a little noise of a random amount to "stutter" the data points to get rid of points overlapping.
+Geom_count displays all points as is, but counts how many points, if any, are occupying the same space.  It then displays how many actual points are at that one point.
 
 **4:** What is the default position adjustement for `geom_boxplot()`? Create a visualization of the `mpg` dataset that demonstrates it.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_boxplot()
+```
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_boxplot(mapping = aes(position = position_dodge2(width = 0.8)))
+```
 
 
 ### Section 3.9: Coordinate systems
 
 **Note:** Read about and do only the code chunk associated with `coord_flip()`. `coord_flip()` is a great layer to use when you have categorical data with longish names as it makes the text easier to read.
+
+## Box plot of mpg class vs. hwy
+```{r}
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+```
+
+## Same but using coord_flip to flip x and y axes
+```{r}
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot() +
+  coord_flip()
+```
 
 ### Section 3.10: The layered grammar of graphics
 
