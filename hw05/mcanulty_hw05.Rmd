@@ -1,18 +1,77 @@
 ---
-title: "R Notebook"
+title: "HW05 Part 1: Data Visualization"
+author: "Ryan McAnulty"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_notebook
+editor_options: 
+  chunk_output_type: inline
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
-```{r}
-plot(cars)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+### Loading tidyverse packages
+```{r}
+library(tidyverse)
+```
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+#### Plot 1
+## Scatter plot for dataset trees
+## loading dataset "trees"
+```{r}
+data(trees)
+```
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+## Checking format of data
+```{r}
+?trees
+```
+
+## Scatter plot of Height vs. Girth using dataset trees.  This shows the height (in feet) of 31 felled black cherry trees vs. the diameter (in inches) of the trees.
+```{r}
+ggplot(data = trees) +
+  geom_point(mapping = aes(x = Height, y = Girth))
+```
+There is an over all trend that as the trees get taller, they also increase in diameter.
+
+#### Plot 2
+## loading dataset "lynx"
+```{r}
+data(lynx)
+```
+
+## Checking format of data
+```{r}
+?lynx
+```
+
+## Making a vector of the lynx data from the years 1821 to 1934
+```{r}
+year <- c(1821:1934)
+```
+
+## Detrmining what class dataset lynx is
+```{r}
+class(lynx)
+```
+
+## Converting lynx data to vector pelts
+```{r}
+pelts <- as.vector(lynx)
+```
+
+## Creating data frame lynx_pelts out of vectors year and pelts
+```{r}
+lynx_pelts <- data.frame("year" = year, "pelts" = pelts)
+```
+
+## Creating Linegraph plot of number of pelts gathered in Canada per year from 1821-1934
+```{r}
+ggplot(data = lynx_pelts) +
+  geom_line(mapping = aes(x = year, y = pelts), color = "maroon")
+```
+
+It seems that the number of pelts gathered during these provided years followed an up and down trend.  There's a spike in the amount of pelts every 10 years or so and goes down to nearly 0 after 5 years.
+
+#### Plot 3
