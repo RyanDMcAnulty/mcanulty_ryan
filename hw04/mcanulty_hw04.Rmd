@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Section 3.1
 
 Load the tidyverse packages. I've entered the first code chunk for you. **You must enter all subsequent code chunks and run the code.** 
-
+## Loading tidyverse packages.
 ```{r}
 library("tidyverse")
 ```
