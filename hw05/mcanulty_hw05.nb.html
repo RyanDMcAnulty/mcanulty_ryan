@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ryan McAnulty" />
 
-<meta name="date" content="2020-07-12" />
+<meta name="date" content="2020-07-14" />
 
 <title>HW05 Part 1: Data Visualization</title>
 
@@ -1747,7 +1747,7 @@ summary {
 
 <h1 class="title toc-ignore">HW05 Part 1: Data Visualization</h1>
 <h4 class="author">Ryan McAnulty</h4>
-<h4 class="date">12 July 2020</h4>
+<h4 class="date">14 July 2020</h4>
 
 </div>
 
@@ -1816,8 +1816,8 @@ summary {
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="checking-format-of-data-1" class="section level2">
-<h2>Checking format of data</h2>
+<div id="checking-format-of-data-for-lynx" class="section level2">
+<h2>Checking format of data for lynx</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuP2x5bnhcbmBgYCJ9 -->
@@ -1843,6 +1843,9 @@ summary {
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3MobHlueClcbmBgYCJ9 -->
 <pre class="r"><code>class(lynx)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwidHNcIlxuIn0= -->
+<pre><code>[1] &quot;ts&quot;</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -1879,11 +1882,148 @@ summary {
 <p>It seems that the number of pelts gathered during these provided years followed an up and down trend. There’s a spike in the amount of pelts every 10 years or so and goes down to nearly 0 after 5 years.</p>
 <div id="plot-3" class="section level4">
 <h4>Plot 3</h4>
+</div>
+</div>
+<div id="loading-dataset-iris" class="section level2">
+<h2>Loading dataset “iris”</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YShpcmlzKVxuYGBgIn0= -->
+<pre class="r"><code>data(iris)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="checking-fromat-of-data-for-iris" class="section level2">
+<h2>Checking fromat of data for iris</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuP2lyaXNcbmBgYCJ9 -->
+<pre class="r"><code>?iris</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="plotting-scatterplot-with-iris-data-set-petal-length-vs.-petal-width-with-distinct-shapes-and-colors-for-species-point-size-2." class="section level2">
+<h2>Plotting scatterplot with iris data set Petal Length vs. Petal Width with distinct shapes and colors for species point size 2.</h2>
+</div>
+<div id="using-labs-to-remove-the-.-out-of-the-axes-labels" class="section level2">
+<h2>Using labs to remove the “.” out of the axes labels</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBpcmlzKSArXG4gIGdlb21fcG9pbnQobWFwcGluZyA9IGFlcyh4ID0gUGV0YWwuTGVuZ3RoLCB5ID0gUGV0YWwuV2lkdGgsIGNvbG9yID0gU3BlY2llcywgc2hhcGUgPSBTcGVjaWVzKSwgc2l6ZSA9IDIpICtcbiAgbGFicyh4ID0gXCJQZXRhbCBMZW5ndGhcIiwgeSA9IFwiUGV0YWwgV2lkdGhcIilcbmBgYCJ9 -->
+<pre class="r"><code>ggplot(data = iris) +
+  geom_point(mapping = aes(x = Petal.Length, y = Petal.Width, color = Species, shape = Species), size = 2) +
+  labs(x = &quot;Petal Length&quot;, y = &quot;Petal Width&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The Species “setosa” has much smaller petals than the other two. “Virginica” is generally larger than “Versicolor” with a couple of the “Versicolor” being larger than the smallest of the “Virginica”.</p>
+<div id="plot-4-and-5" class="section level4">
+<h4>Plot 4 and 5</h4>
+</div>
+</div>
+<div id="loading-dataset-msleep" class="section level2">
+<h2>Loading dataset msleep</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YShtc2xlZXApXG5gYGAifQ== -->
+<pre class="r"><code>data(msleep)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="checking-data-msleep-format" class="section level2">
+<h2>Checking data msleep format</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuP21zbGVlcFxuYGBgIn0= -->
+<pre class="r"><code>?msleep</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="looking-up-infor-on-plot-type-violin" class="section level2">
+<h2>Looking up infor on plot type &quot;Violin</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuP2dlb21fdmlvbGluXG5gYGAifQ== -->
+<pre class="r"><code>?geom_violin</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="a-violin-plot-of-dataset-msleep-with-vore-diet-of-mammal-vs.rem_sleep-number-of-hours-of-rem-sleep-in-hours-with-fill-color-of" class="section level2">
+<h2>A Violin plot of dataset msleep with vore (diet of mammal) vs.“rem_sleep” (Number of hours of REM sleep in hours) with fill color of</h2>
+</div>
+<div id="gray30" class="section level2">
+<h2>“gray30”</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBtc2xlZXApICtcbiAgZ2VvbV92aW9saW4obWFwcGluZyA9IGFlcyh4ID0gdm9yZSwgeSA9IHNsZWVwX3JlbSksIGZpbGwgPSBcImdyYXkzMFwiKVxuYGBgIn0= -->
+<pre class="r"><code>ggplot(data = msleep) +
+  geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = &quot;gray30&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="a-violin-plot-of-dataset-msleep-with-vore-diet-of-mammal-vs.rem_sleep-number-of-hours-of-rem-sleep-in-hours-with-fill-color-of-1" class="section level2">
+<h2>A Violin plot of dataset msleep with vore (diet of mammal) vs.“rem_sleep” (Number of hours of REM sleep in hours) with fill color of</h2>
+</div>
+<div id="gray-70" class="section level2">
+<h2>“gray 70”</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBtc2xlZXApICtcbiAgZ2VvbV92aW9saW4obWFwcGluZyA9IGFlcyh4ID0gdm9yZSwgeSA9IHNsZWVwX3JlbSksIGZpbGwgPSBcImdyYXk3MFwiKVxuYGBgIn0= -->
+<pre class="r"><code>ggplot(data = msleep) +
+  geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = &quot;gray70&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>It looks like meat eaters have the largest range of rem sleep hours per night, but usually requires about 2 hours. It appears those that are plant eaters in general require less rem, perhaps so that they can recharge and avoid preadators more often. It seems that geom_violin displays the data in a density plot, one that is wider where more data points converge. It produces a plot that looks similar to the shape of a violin (to varying success). “grey” displays a medium grey tint, added a number changes to a range of tint; from “grey 0” being nearly black to “grey 100” being basically white.</p>
+<div id="plot-7" class="section level4">
+<h4>Plot 7</h4>
+</div>
+</div>
+<div id="box-plot-of-msleep-dataset-with-order-vs.-sleep_total-with-the-x-and-y-axes-flipped" class="section level2">
+<h2>Box plot of msleep dataset with order vs. sleep_total with the x and y axes flipped</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBtc2xlZXApICtcbiAgZ2VvbV9ib3hwbG90KG1hcHBpbmcgPSBhZXMoeCA9IG9yZGVyLCB5ID0gc2xlZXBfdG90YWwpKSArXG4gIGNvb3JkX2ZsaXAoKVxuYGBgIn0= -->
+<pre class="r"><code>ggplot(data = msleep) +
+  geom_boxplot(mapping = aes(x = order, y = sleep_total)) +
+  coord_flip()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>It seems that “rodentias” have has the second most range in total sleep, on average sleeping half the day. “artiocdactyla” sleeps very little,except for one outlying species that sleeps for 9 hours. “chiroptera” sleeps almost all day.</p>
+<div id="plot-8" class="section level4">
+<h4>Plot 8</h4>
+</div>
+</div>
+<div id="box-plot-with-points-of-msleep-conservation-vs.-awake-with-the-points-jittered-and-conservation-colored" class="section level2">
+<h2>Box plot with points of msleep Conservation vs. Awake with the points “jittered” and Conservation colored</h2>
+</div>
+<div id="capitalizing-the-axes-and-legend-titles" class="section level2">
+<h2>Capitalizing the axes and Legend titles</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBtc2xlZXAsIG1hcHBpbmcgPSBhZXMoeCA9IGNvbnNlcnZhdGlvbiwgeSA9IGF3YWtlLCBjb2xvciA9IGNvbnNlcnZhdGlvbikpICtcbiAgZ2VvbV9ib3hwbG90KCkgK1xuICBnZW9tX3BvaW50KHBvc2l0aW9uID0gXCJqaXR0ZXJcIikgK1xuICBsYWJzKHggPSBcIkNvbnNlcnZhdGlvblwiLCB5ID0gXCJBd2FrZVwiLCBjb2xvciA9IFwiQ29uc2VydmF0aW9uXCIpXG5gYGAifQ== -->
+<pre class="r"><code>ggplot(data = msleep, mapping = aes(x = conservation, y = awake, color = conservation)) +
+  geom_boxplot() +
+  geom_point(position = &quot;jitter&quot;) +
+  labs(x = &quot;Conservation&quot;, y = &quot;Awake&quot;, color = &quot;Conservation&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>I’m honestly not really seeing any real trend of hours being awake depending on conservation status. Perhaps a different plot geom would show a trend.</p>
+<div id="plot-9" class="section level4">
+<h4>Plot 9</h4>
 <!-- rnb-text-end -->
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkhXMDUgUGFydCAxOiBEYXRhIFZpc3VhbGl6YXRpb24iDQphdXRob3I6ICJSeWFuIE1jQW51bHR5Ig0KZGF0ZTogImByIGZvcm1hdChTeXMudGltZSgpLCAnJWQgJUIgJVknKWAiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCmVkaXRvcl9vcHRpb25zOiANCiAgY2h1bmtfb3V0cHV0X3R5cGU6IGlubGluZQ0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCiMjIyBMb2FkaW5nIHRpZHl2ZXJzZSBwYWNrYWdlcw0KYGBge3J9DQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmBgYA0KDQojIyMjIFBsb3QgMQ0KIyMgU2NhdHRlciBwbG90IGZvciBkYXRhc2V0IHRyZWVzDQojIyBsb2FkaW5nIGRhdGFzZXQgInRyZWVzIg0KYGBge3J9DQpkYXRhKHRyZWVzKQ0KYGBgDQoNCiMjIENoZWNraW5nIGZvcm1hdCBvZiBkYXRhDQpgYGB7cn0NCj90cmVlcw0KYGBgDQoNCiMjIFNjYXR0ZXIgcGxvdCBvZiBIZWlnaHQgdnMuIEdpcnRoIHVzaW5nIGRhdGFzZXQgdHJlZXMuICBUaGlzIHNob3dzIHRoZSBoZWlnaHQgKGluIGZlZXQpIG9mIDMxIGZlbGxlZCBibGFjayBjaGVycnkgdHJlZXMgdnMuIHRoZSBkaWFtZXRlciAoaW4gaW5jaGVzKSBvZiB0aGUgdHJlZXMuDQpgYGB7cn0NCmdncGxvdChkYXRhID0gdHJlZXMpICsNCiAgZ2VvbV9wb2ludChtYXBwaW5nID0gYWVzKHggPSBIZWlnaHQsIHkgPSBHaXJ0aCkpDQpgYGANClRoZXJlIGlzIGFuIG92ZXIgYWxsIHRyZW5kIHRoYXQgYXMgdGhlIHRyZWVzIGdldCB0YWxsZXIsIHRoZXkgYWxzbyBpbmNyZWFzZSBpbiBkaWFtZXRlci4NCg0KIyMjIyBQbG90IDINCiMjIGxvYWRpbmcgZGF0YXNldCAibHlueCINCmBgYHtyfQ0KZGF0YShseW54KQ0KYGBgDQoNCiMjIENoZWNraW5nIGZvcm1hdCBvZiBkYXRhDQpgYGB7cn0NCj9seW54DQpgYGANCg0KIyMgTWFraW5nIGEgdmVjdG9yIG9mIHRoZSBseW54IGRhdGEgZnJvbSB0aGUgeWVhcnMgMTgyMSB0byAxOTM0DQpgYGB7cn0NCnllYXIgPC0gYygxODIxOjE5MzQpDQpgYGANCg0KIyMgRGV0cm1pbmluZyB3aGF0IGNsYXNzIGRhdGFzZXQgbHlueCBpcw0KYGBge3J9DQpjbGFzcyhseW54KQ0KYGBgDQoNCiMjIENvbnZlcnRpbmcgbHlueCBkYXRhIHRvIHZlY3RvciBwZWx0cw0KYGBge3J9DQpwZWx0cyA8LSBhcy52ZWN0b3IobHlueCkNCmBgYA0KDQojIyBDcmVhdGluZyBkYXRhIGZyYW1lIGx5bnhfcGVsdHMgb3V0IG9mIHZlY3RvcnMgeWVhciBhbmQgcGVsdHMNCmBgYHtyfQ0KbHlueF9wZWx0cyA8LSBkYXRhLmZyYW1lKCJ5ZWFyIiA9IHllYXIsICJwZWx0cyIgPSBwZWx0cykNCmBgYA0KDQojIyBDcmVhdGluZyBMaW5lZ3JhcGggcGxvdCBvZiBudW1iZXIgb2YgcGVsdHMgZ2F0aGVyZWQgaW4gQ2FuYWRhIHBlciB5ZWFyIGZyb20gMTgyMS0xOTM0DQpgYGB7cn0NCmdncGxvdChkYXRhID0gbHlueF9wZWx0cykgKw0KICBnZW9tX2xpbmUobWFwcGluZyA9IGFlcyh4ID0geWVhciwgeSA9IHBlbHRzKSwgY29sb3IgPSAibWFyb29uIikNCmBgYA0KDQpJdCBzZWVtcyB0aGF0IHRoZSBudW1iZXIgb2YgcGVsdHMgZ2F0aGVyZWQgZHVyaW5nIHRoZXNlIHByb3ZpZGVkIHllYXJzIGZvbGxvd2VkIGFuIHVwIGFuZCBkb3duIHRyZW5kLiAgVGhlcmUncyBhIHNwaWtlIGluIHRoZSBhbW91bnQgb2YgcGVsdHMgZXZlcnkgMTAgeWVhcnMgb3Igc28gYW5kIGdvZXMgZG93biB0byBuZWFybHkgMCBhZnRlciA1IHllYXJzLg0KDQojIyMjIFBsb3QgMw0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkhXMDUgUGFydCAxOiBEYXRhIFZpc3VhbGl6YXRpb24iDQphdXRob3I6ICJSeWFuIE1jQW51bHR5Ig0KZGF0ZTogImByIGZvcm1hdChTeXMudGltZSgpLCAnJWQgJUIgJVknKWAiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCmVkaXRvcl9vcHRpb25zOiANCiAgY2h1bmtfb3V0cHV0X3R5cGU6IGlubGluZQ0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCiMjIyBMb2FkaW5nIHRpZHl2ZXJzZSBwYWNrYWdlcw0KYGBge3J9DQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmBgYA0KDQojIyMjIFBsb3QgMQ0KIyMgU2NhdHRlciBwbG90IGZvciBkYXRhc2V0IHRyZWVzDQojIyBsb2FkaW5nIGRhdGFzZXQgInRyZWVzIg0KYGBge3J9DQpkYXRhKHRyZWVzKQ0KYGBgDQoNCiMjIENoZWNraW5nIGZvcm1hdCBvZiBkYXRhDQpgYGB7cn0NCj90cmVlcw0KYGBgDQoNCiMjIFNjYXR0ZXIgcGxvdCBvZiBIZWlnaHQgdnMuIEdpcnRoIHVzaW5nIGRhdGFzZXQgdHJlZXMuICBUaGlzIHNob3dzIHRoZSBoZWlnaHQgKGluIGZlZXQpIG9mIDMxIGZlbGxlZCBibGFjayBjaGVycnkgdHJlZXMgdnMuIHRoZSBkaWFtZXRlciAoaW4gaW5jaGVzKSBvZiB0aGUgdHJlZXMuDQpgYGB7cn0NCmdncGxvdChkYXRhID0gdHJlZXMpICsNCiAgZ2VvbV9wb2ludChtYXBwaW5nID0gYWVzKHggPSBIZWlnaHQsIHkgPSBHaXJ0aCkpDQpgYGANClRoZXJlIGlzIGFuIG92ZXIgYWxsIHRyZW5kIHRoYXQgYXMgdGhlIHRyZWVzIGdldCB0YWxsZXIsIHRoZXkgYWxzbyBpbmNyZWFzZSBpbiBkaWFtZXRlci4NCg0KIyMjIyBQbG90IDINCiMjIGxvYWRpbmcgZGF0YXNldCAibHlueCINCmBgYHtyfQ0KZGF0YShseW54KQ0KYGBgDQoNCiMjIENoZWNraW5nIGZvcm1hdCBvZiBkYXRhIGZvciBseW54DQpgYGB7cn0NCj9seW54DQpgYGANCg0KIyMgTWFraW5nIGEgdmVjdG9yIG9mIHRoZSBseW54IGRhdGEgZnJvbSB0aGUgeWVhcnMgMTgyMSB0byAxOTM0DQpgYGB7cn0NCnllYXIgPC0gYygxODIxOjE5MzQpDQpgYGANCg0KIyMgRGV0cm1pbmluZyB3aGF0IGNsYXNzIGRhdGFzZXQgbHlueCBpcw0KYGBge3J9DQpjbGFzcyhseW54KQ0KYGBgDQoNCiMjIENvbnZlcnRpbmcgbHlueCBkYXRhIHRvIHZlY3RvciBwZWx0cw0KYGBge3J9DQpwZWx0cyA8LSBhcy52ZWN0b3IobHlueCkNCmBgYA0KDQojIyBDcmVhdGluZyBkYXRhIGZyYW1lIGx5bnhfcGVsdHMgb3V0IG9mIHZlY3RvcnMgeWVhciBhbmQgcGVsdHMNCmBgYHtyfQ0KbHlueF9wZWx0cyA8LSBkYXRhLmZyYW1lKCJ5ZWFyIiA9IHllYXIsICJwZWx0cyIgPSBwZWx0cykNCmBgYA0KDQojIyBDcmVhdGluZyBMaW5lZ3JhcGggcGxvdCBvZiBudW1iZXIgb2YgcGVsdHMgZ2F0aGVyZWQgaW4gQ2FuYWRhIHBlciB5ZWFyIGZyb20gMTgyMS0xOTM0DQpgYGB7cn0NCmdncGxvdChkYXRhID0gbHlueF9wZWx0cykgKw0KICBnZW9tX2xpbmUobWFwcGluZyA9IGFlcyh4ID0geWVhciwgeSA9IHBlbHRzKSwgY29sb3IgPSAibWFyb29uIikNCmBgYA0KDQpJdCBzZWVtcyB0aGF0IHRoZSBudW1iZXIgb2YgcGVsdHMgZ2F0aGVyZWQgZHVyaW5nIHRoZXNlIHByb3ZpZGVkIHllYXJzIGZvbGxvd2VkIGFuIHVwIGFuZCBkb3duIHRyZW5kLiAgVGhlcmUncyBhIHNwaWtlIGluIHRoZSBhbW91bnQgb2YgcGVsdHMgZXZlcnkgMTAgeWVhcnMgb3Igc28gYW5kIGdvZXMgZG93biB0byBuZWFybHkgMCBhZnRlciA1IHllYXJzLg0KDQojIyMjIFBsb3QgMw0KIyMgTG9hZGluZyBkYXRhc2V0ICJpcmlzIg0KYGBge3J9DQpkYXRhKGlyaXMpDQpgYGANCg0KIyMgQ2hlY2tpbmcgZnJvbWF0IG9mIGRhdGEgZm9yIGlyaXMNCmBgYHtyfQ0KP2lyaXMNCmBgYA0KDQojIyBQbG90dGluZyBzY2F0dGVycGxvdCB3aXRoIGlyaXMgZGF0YSBzZXQgUGV0YWwgTGVuZ3RoIHZzLiBQZXRhbCBXaWR0aCB3aXRoIGRpc3RpbmN0IHNoYXBlcyBhbmQgY29sb3JzIGZvciBzcGVjaWVzIHBvaW50IHNpemUgMi4NCiMjIFVzaW5nIGxhYnMgdG8gcmVtb3ZlIHRoZSAiLiIgb3V0IG9mIHRoZSBheGVzIGxhYmVscw0KYGBge3J9DQpnZ3Bsb3QoZGF0YSA9IGlyaXMpICsNCiAgZ2VvbV9wb2ludChtYXBwaW5nID0gYWVzKHggPSBQZXRhbC5MZW5ndGgsIHkgPSBQZXRhbC5XaWR0aCwgY29sb3IgPSBTcGVjaWVzLCBzaGFwZSA9IFNwZWNpZXMpLCBzaXplID0gMikgKw0KICBsYWJzKHggPSAiUGV0YWwgTGVuZ3RoIiwgeSA9ICJQZXRhbCBXaWR0aCIpDQpgYGANClRoZSBTcGVjaWVzICJzZXRvc2EiIGhhcyBtdWNoIHNtYWxsZXIgcGV0YWxzIHRoYW4gdGhlIG90aGVyIHR3by4gICJWaXJnaW5pY2EiIGlzIGdlbmVyYWxseSBsYXJnZXIgdGhhbiAiVmVyc2ljb2xvciIgd2l0aCBhIGNvdXBsZSBvZiB0aGUgIlZlcnNpY29sb3IiIGJlaW5nIGxhcmdlciB0aGFuIHRoZSBzbWFsbGVzdCBvZiB0aGUgIlZpcmdpbmljYSIuDQoNCiMjIyMgUGxvdCA0IGFuZCA1DQojIyBMb2FkaW5nIGRhdGFzZXQgbXNsZWVwDQpgYGB7cn0NCmRhdGEobXNsZWVwKQ0KYGBgDQoNCiMjIENoZWNraW5nIGRhdGEgbXNsZWVwIGZvcm1hdA0KYGBge3J9DQo/bXNsZWVwDQpgYGANCg0KIyMgTG9va2luZyB1cCBpbmZvciBvbiBwbG90IHR5cGUgIlZpb2xpbg0KYGBge3J9DQo/Z2VvbV92aW9saW4NCmBgYA0KDQojIyBBIFZpb2xpbiBwbG90IG9mIGRhdGFzZXQgbXNsZWVwIHdpdGggdm9yZSAoZGlldCBvZiBtYW1tYWwpIHZzLiJyZW1fc2xlZXAiIChOdW1iZXIgb2YgaG91cnMgb2YgUkVNIHNsZWVwIGluIGhvdXJzKSB3aXRoIGZpbGwgY29sb3Igb2YgDQojIyAiZ3JheTMwIiANCmBgYHtyfQ0KZ2dwbG90KGRhdGEgPSBtc2xlZXApICsNCiAgZ2VvbV92aW9saW4obWFwcGluZyA9IGFlcyh4ID0gdm9yZSwgeSA9IHNsZWVwX3JlbSksIGZpbGwgPSAiZ3JheTMwIikNCmBgYA0KIyMgQSBWaW9saW4gcGxvdCBvZiBkYXRhc2V0IG1zbGVlcCB3aXRoIHZvcmUgKGRpZXQgb2YgbWFtbWFsKSB2cy4icmVtX3NsZWVwIiAoTnVtYmVyIG9mIGhvdXJzIG9mIFJFTSBzbGVlcCBpbiBob3Vycykgd2l0aCBmaWxsIGNvbG9yIG9mIA0KIyMgImdyYXkgNzAiDQpgYGB7cn0NCmdncGxvdChkYXRhID0gbXNsZWVwKSArDQogIGdlb21fdmlvbGluKG1hcHBpbmcgPSBhZXMoeCA9IHZvcmUsIHkgPSBzbGVlcF9yZW0pLCBmaWxsID0gImdyYXk3MCIpDQpgYGANCkl0IGxvb2tzIGxpa2UgbWVhdCBlYXRlcnMgaGF2ZSB0aGUgbGFyZ2VzdCByYW5nZSBvZiByZW0gc2xlZXAgaG91cnMgcGVyIG5pZ2h0LCBidXQgdXN1YWxseSByZXF1aXJlcyBhYm91dCAyIGhvdXJzLiAgSXQgYXBwZWFycyB0aG9zZSB0aGF0IGFyZSBwbGFudCBlYXRlcnMgaW4gZ2VuZXJhbCByZXF1aXJlIGxlc3MgcmVtLCBwZXJoYXBzIHNvIHRoYXQgdGhleSBjYW4gcmVjaGFyZ2UgYW5kIGF2b2lkIHByZWFkYXRvcnMgbW9yZSBvZnRlbi4NCkl0IHNlZW1zIHRoYXQgZ2VvbV92aW9saW4gZGlzcGxheXMgdGhlIGRhdGEgaW4gYSBkZW5zaXR5IHBsb3QsIG9uZSB0aGF0IGlzIHdpZGVyIHdoZXJlIG1vcmUgZGF0YSBwb2ludHMgY29udmVyZ2UuICBJdCBwcm9kdWNlcyBhIHBsb3QgdGhhdCBsb29rcyBzaW1pbGFyIHRvIHRoZSBzaGFwZSBvZiBhIHZpb2xpbiAodG8gdmFyeWluZyBzdWNjZXNzKS4gICJncmV5IiBkaXNwbGF5cyBhIG1lZGl1bSBncmV5IHRpbnQsIGFkZGVkIGEgbnVtYmVyIGNoYW5nZXMgdG8gYSByYW5nZSBvZiB0aW50OyBmcm9tICJncmV5IDAiIGJlaW5nIG5lYXJseSBibGFjayB0byAiZ3JleSAxMDAiIGJlaW5nIGJhc2ljYWxseSB3aGl0ZS4NCg0KIyMjIyBQbG90IDcNCiMjIEJveCBwbG90IG9mIG1zbGVlcCBkYXRhc2V0IHdpdGggb3JkZXIgdnMuIHNsZWVwX3RvdGFsIHdpdGggdGhlIHggYW5kIHkgYXhlcyBmbGlwcGVkDQpgYGB7cn0NCmdncGxvdChkYXRhID0gbXNsZWVwKSArDQogIGdlb21fYm94cGxvdChtYXBwaW5nID0gYWVzKHggPSBvcmRlciwgeSA9IHNsZWVwX3RvdGFsKSkgKw0KICBjb29yZF9mbGlwKCkNCmBgYA0KSXQgc2VlbXMgdGhhdCAicm9kZW50aWFzIiBoYXZlIGhhcyB0aGUgc2Vjb25kIG1vc3QgcmFuZ2UgaW4gdG90YWwgc2xlZXAsIG9uIGF2ZXJhZ2Ugc2xlZXBpbmcgaGFsZiB0aGUgZGF5LiAiYXJ0aW9jZGFjdHlsYSIgc2xlZXBzIHZlcnkgbGl0dGxlLGV4Y2VwdCBmb3Igb25lIG91dGx5aW5nIHNwZWNpZXMgdGhhdCBzbGVlcHMgZm9yIDkgaG91cnMuICAiY2hpcm9wdGVyYSIgc2xlZXBzIGFsbW9zdCBhbGwgZGF5Lg0KDQojIyMjIFBsb3QgOA0KIyMgQm94IHBsb3Qgd2l0aCBwb2ludHMgb2YgbXNsZWVwIENvbnNlcnZhdGlvbiB2cy4gQXdha2Ugd2l0aCB0aGUgcG9pbnRzICJqaXR0ZXJlZCIgYW5kIENvbnNlcnZhdGlvbiBjb2xvcmVkDQojIyBDYXBpdGFsaXppbmcgdGhlIGF4ZXMgYW5kIExlZ2VuZCB0aXRsZXMNCmBgYHtyfQ0KZ2dwbG90KGRhdGEgPSBtc2xlZXAsIG1hcHBpbmcgPSBhZXMoeCA9IGNvbnNlcnZhdGlvbiwgeSA9IGF3YWtlLCBjb2xvciA9IGNvbnNlcnZhdGlvbikpICsNCiAgZ2VvbV9ib3hwbG90KCkgKw0KICBnZW9tX3BvaW50KHBvc2l0aW9uID0gImppdHRlciIpICsNCiAgbGFicyh4ID0gIkNvbnNlcnZhdGlvbiIsIHkgPSAiQXdha2UiLCBjb2xvciA9ICJDb25zZXJ2YXRpb24iKQ0KYGBgDQpJJ20gaG9uZXN0bHkgbm90IHJlYWxseSBzZWVpbmcgYW55IHJlYWwgdHJlbmQgb2YgaG91cnMgYmVpbmcgYXdha2UgZGVwZW5kaW5nIG9uIGNvbnNlcnZhdGlvbiBzdGF0dXMuICBQZXJoYXBzIGEgZGlmZmVyZW50IHBsb3QgZ2VvbSB3b3VsZCBzaG93IGEgdHJlbmQuDQoNCiMjIyMgUGxvdCA5DQo=</div>
 
 
 

@@ -41,7 +41,7 @@ There is an over all trend that as the trees get taller, they also increase in d
 data(lynx)
 ```
 
-## Checking format of data
+## Checking format of data for lynx
 ```{r}
 ?lynx
 ```
@@ -75,3 +75,74 @@ ggplot(data = lynx_pelts) +
 It seems that the number of pelts gathered during these provided years followed an up and down trend.  There's a spike in the amount of pelts every 10 years or so and goes down to nearly 0 after 5 years.
 
 #### Plot 3
+## Loading dataset "iris"
+```{r}
+data(iris)
+```
+
+## Checking fromat of data for iris
+```{r}
+?iris
+```
+
+## Plotting scatterplot with iris data set Petal Length vs. Petal Width with distinct shapes and colors for species point size 2.
+## Using labs to remove the "." out of the axes labels
+```{r}
+ggplot(data = iris) +
+  geom_point(mapping = aes(x = Petal.Length, y = Petal.Width, color = Species, shape = Species), size = 2) +
+  labs(x = "Petal Length", y = "Petal Width")
+```
+The Species "setosa" has much smaller petals than the other two.  "Virginica" is generally larger than "Versicolor" with a couple of the "Versicolor" being larger than the smallest of the "Virginica".
+
+#### Plot 4 and 5
+## Loading dataset msleep
+```{r}
+data(msleep)
+```
+
+## Checking data msleep format
+```{r}
+?msleep
+```
+
+## Looking up infor on plot type "Violin
+```{r}
+?geom_violin
+```
+
+## A Violin plot of dataset msleep with vore (diet of mammal) vs."rem_sleep" (Number of hours of REM sleep in hours) with fill color of 
+## "gray30" 
+```{r}
+ggplot(data = msleep) +
+  geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = "gray30")
+```
+## A Violin plot of dataset msleep with vore (diet of mammal) vs."rem_sleep" (Number of hours of REM sleep in hours) with fill color of 
+## "gray 70"
+```{r}
+ggplot(data = msleep) +
+  geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = "gray70")
+```
+It looks like meat eaters have the largest range of rem sleep hours per night, but usually requires about 2 hours.  It appears those that are plant eaters in general require less rem, perhaps so that they can recharge and avoid preadators more often.
+It seems that geom_violin displays the data in a density plot, one that is wider where more data points converge.  It produces a plot that looks similar to the shape of a violin (to varying success).  "grey" displays a medium grey tint, added a number changes to a range of tint; from "grey 0" being nearly black to "grey 100" being basically white.
+
+#### Plot 7
+## Box plot of msleep dataset with order vs. sleep_total with the x and y axes flipped
+```{r}
+ggplot(data = msleep) +
+  geom_boxplot(mapping = aes(x = order, y = sleep_total)) +
+  coord_flip()
+```
+It seems that "rodentias" have has the second most range in total sleep, on average sleeping half the day. "artiocdactyla" sleeps very little,except for one outlying species that sleeps for 9 hours.  "chiroptera" sleeps almost all day.
+
+#### Plot 8
+## Box plot with points of msleep Conservation vs. Awake with the points "jittered" and Conservation colored
+## Capitalizing the axes and Legend titles
+```{r}
+ggplot(data = msleep, mapping = aes(x = conservation, y = awake, color = conservation)) +
+  geom_boxplot() +
+  geom_point(position = "jitter") +
+  labs(x = "Conservation", y = "Awake", color = "Conservation")
+```
+I'm honestly not really seeing any real trend of hours being awake depending on conservation status.  Perhaps a different plot geom would show a trend.
+
+#### Plot 9
