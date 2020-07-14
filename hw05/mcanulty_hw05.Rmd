@@ -146,3 +146,18 @@ ggplot(data = msleep, mapping = aes(x = conservation, y = awake, color = conserv
 I'm honestly not really seeing any real trend of hours being awake depending on conservation status.  Perhaps a different plot geom would show a trend.
 
 #### Plot 9
+## Scatter plot of various mammals time awake vs. body weight with different diets 
+```{r}
+ggplot(data = msleep) +
+  geom_point(mapping = aes(x = awake, y = bodywt, color = vore)) +
+  facet_wrap(~ vore, ncol = 3)
+```
+I couldn't really determine any true trends relating sleep/awake vs. diet or conservation status, except that I found it surprising that the two mammals that are the heaviest (almost 3ooo kg and over 6000 kg) can be awake for 20 hrs.
+
+#### Plot 10
+## Scatter plot of various mammals total time slept vs. brain weight with different diets
+```{r}
+ggplot(data = msleep) +
+  geom_point(mapping = aes(x = sleep_total, y = brainwt, color = vore))
+```
+It seems that carnivores tend to have smaller brains than omni or herbivores, two of the herbivores having the biggest of the representive data.  Herbivores tend to require less sleep as the other species here. 
