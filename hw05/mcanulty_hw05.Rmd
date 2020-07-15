@@ -116,7 +116,7 @@ data(msleep)
 ggplot(data = msleep) +
   geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = "gray30")
 ```
-## A Violin plot of dataset msleep with vore (diet of mammal) vs."rem_sleep" (Number of hours of REM sleep in hours) with fill color of 
+## A Violin plot of dataset msleep with vore (diet of mammal) vs."rem_sleep" (Number of hours of REM sleep) with fill color of 
 ## "gray 70"
 ```{r}
 ggplot(data = msleep) +
@@ -132,7 +132,7 @@ ggplot(data = msleep) +
   geom_boxplot(mapping = aes(x = order, y = sleep_total)) +
   coord_flip()
 ```
-It seems that "rodentias" have has the second most range in total sleep, on average sleeping half the day. "artiocdactyla" sleeps very little,except for one outlying species that sleeps for 9 hours.  "chiroptera" sleeps almost all day.
+It seems that "rodentias" have the second most range in total sleep, on average sleeping half the day. "artiocdactyla" sleeps very little, except for one outlying species that sleeps for 9 hours.  "chiroptera" sleeps almost all day.
 
 #### Plot 8
 ## Box plot with points of msleep Conservation vs. Awake with the points "jittered" and Conservation colored
@@ -140,7 +140,8 @@ It seems that "rodentias" have has the second most range in total sleep, on aver
 ```{r}
 ggplot(data = msleep, mapping = aes(x = conservation, y = awake, color = conservation)) +
   geom_boxplot() +
-  geom_point(position = "jitter") +
+  geom_point() +
+  geom_jitter() +
   labs(x = "Conservation", y = "Awake", color = "Conservation")
 ```
 I'm honestly not really seeing any real trend of hours being awake depending on conservation status.  Perhaps a different plot geom would show a trend.
