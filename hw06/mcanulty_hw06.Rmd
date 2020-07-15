@@ -163,7 +163,8 @@ df[, c("abc", "xyz")]
 ```{r}
 as_tibble(df)
 ```
-
+tibble requires less code.  Dataframes by default displays all the data.  For bigger data sets this could overwhelm the computer, but tibble only displays 10 rows by default.  Data frames don't give the type of data of each
+column, tibble does, making it easier to manipulate the data.
 
 ## Chapter 11: Importing data
 
@@ -179,24 +180,60 @@ Do *not* run the first code chunk of this section, which begins with `heights <-
 
 Enter and run the remaining chunks in this section.
 
+## Creating a csv with read_csv
+```{r}
+read_csv("a,b,c
+1,2,3
+4,5,6")
+```
+
+## Skipping meta data you want to leave out with skip = n
+```{r}
+read_csv("The first line of metadata
+  The second line of metadata
+  x,y,z
+  1,2,3", skip = 2)
+```
+
+## Using comment = #
+```{r}
+read_csv("# A comment I want to skip
+  x,y,z
+  1,2,3", comment = "#")
+```
+
+## No column names, so numbering them
+```{r}
+read_csv("1,2,3\n4,5,6", col_names = FALSE)
+```
+
+## Nameing columns as a vector
+```{r}
+read_csv("1,2,3\n4,5,6", col_names = c("x","y","z"))
+```
+
+## Specifying NA with na
+```{r}
+read_csv("a,b,c\n1,2,.", na = ".")
+```
 
 #### 11.2 Questions
 
 **1:** What function would you use to read a file where fields were separated with "|"?
-
-
+You would use read_delim() to read a file with any delimiter.
 
 **2:** (This question is modified from the text.) Finish the two lines of `read_delim` code so that the first one would read a comma-separated file and the second would read a tab-separated file. You only need to worry about the delimiter. Do not worry about other arguments. Replace the dots in each line with the rest of your code. 
 
 # Comma-separated
-`file <- read_delim("file.csv", ...)`
+`file <- read_delim("file.csv", ",")`
 
 # Tab-separated
-`file <- read_delim("file.csv", ...)`
+`file <- read_delim("file.csv", "    ")`
 
 
 **3:** What are the two most important arguments to `read_fwf()`? Why?
-
+file-this denotes the file to be extracted or created
+col_positions - This defines the column positions.
 
 **4:** Skip this question
 
@@ -210,6 +247,17 @@ read_csv("a,b\n\"1")
 read_csv("a,b\n1,2\na,b")
 read_csv("a;b\n1;3")
 ```
+
+read_csv("a,b\n1,2,3\n4,5,6") - Only two columns are defined, won't display the third value of each row.  Parsing failure, expected 2 columns, 3 columns
+
+read_csv("a,b,c\n1,2\n1,2,3,4") - 3 columns defined, 2 columns in first row, 4 in 2nd.  Prints NA in column "c" for first row,
+doesn't print "4" in second row.
+
+read_csv("a,b\n\"1") - 2 columns defined, no values in first row, only one in 2nd row.  Prints no row 1, Prints NA for second column of row 2.  Only Prints one row.
+
+read_csv("a,b\n1,2\na,b") - Appears to be fine.  I'm sure this is not what was intended, but prints correctly as is. 
+
+read_csv("a;b\n1;3") - ";" used as deliminator instead of ",".  Prints column as one variable, as well as row.  
 
 ### 11.3 and 11.4: Not required
 
