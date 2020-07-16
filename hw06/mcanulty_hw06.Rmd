@@ -59,8 +59,7 @@ tb <- tibble(
   ":)" = "smile",
   " " = "space",
   "2000" = "number"
-  
-)
+  )
 ```
 
 ## run tb
@@ -293,6 +292,27 @@ You do not have to run any of the examples in this section.
 
 Read from the start of the chapter through 12.3.1. Run the examples in section 12.3.1 (Longer), including the example with `left_join()`. We'll cover joins later. Skip section 12.3.2.
 
+## Pivoting "1999" and "2000" from table 4a into one, new column names "year" and adding in data and column cases using pivot_longer
+```{r}
+table4a %>% 
+  pivot_longer(c('1999', '2000'), names_to = "year", values_to = "cases")
+```
+
+## Pivoting again, this time adding in "population"
+```{r}
+table4b %>%   
+  pivot_longer(c('1999', '2000'), names_to = "year", values_to = "population")
+```
+
+## Combining table4a and table4b into a single tibble
+```{r}
+tidy4a <- table4a %>% 
+  pivot_longer(c('1999', '2000'), names_to = "year", values_to = "cases")
+tidy4b <- table4b%>% 
+  pivot_longer(c('1999', '2000'), names_to = "year", values_to = "population")
+left_join(tidy4a, tidy4b)
+```
+
 #### 12.3.3 Questions
 
 **2:** Why does this code fail? Fix it so it works.
@@ -301,6 +321,13 @@ Read from the start of the chapter through 12.3.1. Run the examples in section 1
 table4a %>% 
   pivot_longer(c(1999,2000), names_to = "year", values_to = "cases")
 #> Error in inds_combine(.vars, ind_list): Position must be between 0 and n
+```
+The values of "1999" and "2000" are non-syntatic names (Don't start with a letter).  Must be inside backticks.
+
+## Fixing code by putting "1999" and "2000" in backticks
+```{r}
+table4a %>% 
+  pivot_longer(c('1999', '2000'), names_to = "year", values_to = "cases")
 ```
 
 Skip the rest of Chapter 12. On to the last chapter.
