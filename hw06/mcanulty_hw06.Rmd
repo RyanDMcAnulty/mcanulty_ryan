@@ -370,9 +370,9 @@ jan1 <- filter(flights, month == 1, day == 1)
 ```
 
 ## Showing that equal is ==, not =
-```{r}
-filter(flights, month = 1)
-```
+# ```{r}
+# filter(flights, month = 1)
+# ```
 
 ## Showing that computers have problems with irrational numbers
 ```{r}
@@ -480,15 +480,34 @@ filter(flights, dep_time >= 0 & dep_time <= 600)
 ```
 
 **2:** Another useful dplyr filtering helper is `between()`. What does it do? Can you use it to simplify the code needed to answer the previous challenges?
+```{r}
+filter(flights, between(dep_time, 0, 600))
+```
 
+```{r}
+filter(flights, between(month, 7, 9))
+```
+
+Between() filters the x variable that between two numeric values.  As show, it simplifies 1.7 and 1.4 because the desired output is a range.
 
 **3:** How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
+## Count of when dep_time displays NA
+```{r}
+count(flights, is.na(dep_time))
+```
+There are 8255 flights missing dep_time.
 
+## Checking for additional missing values
+```{r}
+filter(flights, is.na(dep_time))
+```
+
+Dep_delay, arr_time, arr_delay, and air_time are also missing (sometimes tailnum).  This probably means these are cancelled, rescheduled, or postponed flights.
 
 **4:** Why is `NA ^ 0` not missing? Why is `NA | TRUE` not missing? Why is `FALSE & NA` not missing? Can you figure out the general rule? (`NA * 0` is a tricky counterexample!)
 
 **Note:** For some context, see [this thread](https://blog.revolutionanalytics.com/2016/07/understanding-na-in-r.html)
-
+NA is not a number, but a placeholder for a number that is unknown.  Na^0, anything raised to the 0th power is 1, not missing. NA|TRUE is always true, whatever value you place there you are setting it as TRUE, so TRUE not missing. FALSE & NA, whatever NA is, you are saying it is also FALSE, so it is always FALSE, not missing. 
 
 ### 5.3 Arrange with `arrange()`
 
