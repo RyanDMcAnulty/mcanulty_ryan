@@ -343,32 +343,141 @@ Time to [get small.](https://www.youtube.com/watch?v=GOrdzCHnpw4)
 
 Load the necessary libraries. As usual, type the examples into and run the code chunks.
 
+## Loading nycflights13 and tidyverse
+```{r}
+library(nycflights13)
+library(tidyverse)
+```
+
+
 ### 5.2: Filter rows with `filter()`
 
 Study Figure 5.1 carefully. Once you learn the `&`, `|`, and `!` logic, you will find them to be very powerful tools.
 
+## Selecting all flights on January 1st with filter()
+```{r}
+filter(flights, month == 1, day == 1)
+```
+
+## Saving data frame as jan1
+```{r}
+jan1 <- filter(flights, month == 1, day == 1)
+```
+
+## Naming and printing a data set
+```{r}
+(dec25 <- filter(flights, month == 12, day == 25))
+```
+
+## Showing that equal is ==, not =
+```{r}
+filter(flights, month = 1)
+```
+
+## Showing that computers have problems with irrational numbers
+```{r}
+sqrt(2) ^ 2 == 2
+```
+```{r}
+1/49*49 == 1
+```
+
+## Showing a fix
+```{r}
+near(sqrt(2) ^ 2, 2)
+```
+```{r}
+near(1 / 49 *49, 1)
+```
+
+## Using Boolean operators to display all flights in November and December
+```{r}
+filter(flights, month == 11 | month == 12)
+```
+
+## A shortcut fix
+```{r}
+nov_dec <- filter(flights, month %in% c(11, 12))
+```
+
+## Showing flights that weren't delayed on arrival or departure by more that two hours
+```{r}
+filter(flights, !(arr_delay > 120 | dep_delay > 120))
+filter(flights, arr_delay <= 120, dep_delay <= 120)
+```
+
+## Showing quirks of NA (Not availables)
+```{r}
+NA > 5
+10 == NA
+NA + 10
+NA / 2
+NA == NA
+```
+
+## Showing what is going on
+```{r}
+# Let x be Mary's age. We don't know how old she is.
+x <- NA
+
+# Let y be John's age. We don't know how old he is.
+y <- NA
+
+# Are John and Mary the same age?
+x == y
+#> [1] NA
+# We don't know!
+```
+
+## Checking if value is missing
+```{r}
+is.na(x)
+```
+
+## Preserving NA values
+```{r}
+df <- tibble(x = c(1, NA, 3))
+filter(df, x > 1)
+filter(df, is.na(x) | x > 1)
+```
 
 #### 5.2 Questions
 
 **1.1:** Find all flights with a delay of 2 hours or more.
-
+```{r}
+filter(flights, !(arr_delay <= 120 | dep_delay <= 120))
+```
 
 **1.2:** Flew to Houston (IAH or HOU)
-
+```{r}
+filter(flights, dest == "IAH" | dest == "HOU")
+```
 
 **1.3:** Were operated by United (UA), American (AA), or Delta (DL).
-
+```{r}
+filter(flights, carrier %in% c("UA", "AA", "DL"))
+```
 
 **1.4:** Departed in summer (July, August, and September).
-
+```{r}
+filter(flights, month %in% c(7:9))
+```
 
 **1.5:** Arrived more than two hours late, but didn’t leave late.
+```{r}
+filter(flights, dep_delay  <= 0 & arr_delay >= 120)
+```
 
 **1.6:** Were delayed by at least an hour, but made up over 30 minutes in flight. This is a tricky one. Do your best.
-
+```{r}
+filter(flights, dep_delay >= 60 & (arr_delay - dep_delay) < -30)
+```
+## Took over an hour to figure that out
 
 **1.7:** Departed between midnight and 6am (inclusive)
-
+```{r}
+filter(flights, dep_time >= 0 & dep_time <= 600)
+```
 
 **2:** Another useful dplyr filtering helper is `between()`. What does it do? Can you use it to simplify the code needed to answer the previous challenges?
 
