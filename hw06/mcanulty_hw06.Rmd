@@ -143,10 +143,10 @@ str(mtcars)
 str(msleep)
 ```
 
-It says # A tibble: rowsxcolumns at start.
-It displays the type of category each column name is.
+Tibbles present the data in a table format.  This looks cleaner and is easier to read.
+Tibbles display the type of category each column name is.
 As_tibble() converts data to a tibble.
-Class() displays wether it is a "data. frame" or "tbl".
+Class() displays whether it is a "data. frame" or "tbl".
 Str() displays the structure of the data, tibbles are in vectors, data.frames are numbers
 
 **2:** Compare and contrast the following operations on a data.frame and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?
@@ -162,8 +162,7 @@ df[, c("abc", "xyz")]
 ```{r}
 as_tibble(df)
 ```
-tibble requires less code.  Dataframes by default displays all the data.  For bigger data sets this could overwhelm the computer, but tibble only displays 10 rows by default.  Data frames don't give the type of data of each
-column, tibble does, making it easier to manipulate the data.
+tibble requires less code.  Dataframes by default display all the data.  For bigger data sets this could overwhelm the computer, but tibble only displays 10 rows by default.  Data frames don't give the type of data of each column, tibble does, making it easier to manipulate the data.
 
 ## Chapter 11: Importing data
 
@@ -219,12 +218,13 @@ read_csv("a,b,c\n1,2,.", na = ".")
 #### 11.2 Questions
 
 **1:** What function would you use to read a file where fields were separated with "|"?
+
 You would use read_delim() to read a file with any delimiter.
 
 **2:** (This question is modified from the text.) Finish the two lines of `read_delim` code so that the first one would read a comma-separated file and the second would read a tab-separated file. You only need to worry about the delimiter. Do not worry about other arguments. Replace the dots in each line with the rest of your code. 
 
 # Comma-separated
-`file <- read_delim("file.csv", ",")`
+file <- read_delim("file.csv", ",")`
 
 # Tab-separated
 `file <- read_delim("file.csv", "    ")`
@@ -472,7 +472,6 @@ filter(flights, dep_delay  <= 0 & arr_delay >= 120)
 ```{r}
 filter(flights, dep_delay >= 60 & (arr_delay - dep_delay) < -30)
 ```
-## Took over an hour to figure that out
 
 **1.7:** Departed between midnight and 6am (inclusive)
 ```{r}
@@ -507,50 +506,149 @@ Dep_delay, arr_time, arr_delay, and air_time are also missing (sometimes tailnum
 **4:** Why is `NA ^ 0` not missing? Why is `NA | TRUE` not missing? Why is `FALSE & NA` not missing? Can you figure out the general rule? (`NA * 0` is a tricky counterexample!)
 
 **Note:** For some context, see [this thread](https://blog.revolutionanalytics.com/2016/07/understanding-na-in-r.html)
+
 NA is not a number, but a placeholder for a number that is unknown.  Na^0, anything raised to the 0th power is 1, not missing. NA|TRUE is always true, whatever value you place there you are setting it as TRUE, so TRUE not missing. FALSE & NA, whatever NA is, you are saying it is also FALSE, so it is always FALSE, not missing. 
 
 ### 5.3 Arrange with `arrange()`
 
+## Arranging "flights" by year, then month, then day
+```{r}
+arrange(flights, year, month, day)
+```
+
+## Arranged by column in descending order
+```{r}
+arrange(flights, desc(dep_delay))
+```
+
+## Missing values are sorted at the end
+```{r}
+df <- tibble(x = c(5, 2, NA))
+arrange(df, x)
+```
+```{r}
+arrange(df, desc(x))
+```
 
 #### 5.3 Questions
 
 **1:** How could you use `arrange()` to sort all missing values to the start? (Hint: use is.na()). **Note:** This one should still have the earliest departure dates after the `NA`s. *Hint:* What does `desc()` do?
-
+```{r}
+arrange(flights, desc(is.na(dep_delay)))
+```
 
 **2:** Sort flights to find the most delayed flights. Find the flights that left earliest. 
+## Flights that were most delayed
+```{r}
+arrange(flights, desc(dep_delay))
+```
+
+## Flights that left earliest
+```{r}
+arrange(flights, dep_delay)
+```
 
 This question is asking for the flights that were most delayed (left latest after scheduled departure time) and least delayed (left ahead of scheduled time).
 
 
 **3:** Sort flights to find the fastest flights. Interpret fastest to mean shortest time in the air.
 
+```{r}
+arrange(flights, air_time)
+```
+
 
 *Optional challenge:* fastest flight could refer to fastest air speed. Speed is measured in miles per hour but time is minutes. Arrange the data by fastest air speed.
-
+```{r}
+arrange(flights, desc((distance / (air_time / 60))))
+```
 
 **4:** Which flights travelled the longest? Which travelled the shortest?
+```{r}
+arrange(flights, desc(distance))
+```
 
+## Assuming "shortest" means least distance
+```{r}
+arrange(flights, distance)
+```
 
 ### 5.4 Select columns with `select()`
+
+## Selecting columns by name
+```{r}
+select(flights, year, month, day)
+```
+
+## Selecting columns between year and day (inclusive)
+
+```{r}
+select(flights, year:day)
+```
+
+## Selecting all columns except from year to day (inclusive)
+```{r}
+select(flights, -(year:day))
+```
+
+## Using rename() to rename a variable
+```{r}
+rename(flights, tail_num = tailnum)
+```
+
+## Using select() to move time_hour and air_time to the front
+```{r}
+select(flights, time_hour, air_time, everything())
+```
 
 #### 5.4 Questions
 
 **1:** Brainstorm as many ways as possible to select `dep_time`, `dep_delay`, `arr_time`, and `arr_delay` from flights. Find at least three ways.
+```{r}
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+```
 
+```{r}
+select(flights, dep_time, dep_delay:arr_time, arr_delay)
+```
+
+```{r}
+select(flights, (dep_time:arr_delay & -sched_dep_time & -sched_arr_time))
+```
 
 **2:** What happens if you include the name of a variable multiple times in a `select()` call?
+```{r}
+select(flights, dep_time, dep_time)
+```
 
-
+It looks like it takes the other mention as extraneous and ignores.
 
 **3:** What does the `one_of()` function do? Why might it be helpful in conjunction with this vector?
-
 `vars <- c("year", "month", "day", "dep_delay", "arr_delay")`
+```{r}
+var <- c("year", "month", "day", "dep_delay", "arr_delay")
+```
 
+```{r}
+select(flights, one_of(var))
+```
 
+It selects and prints any column that includes the variable names listed.
 
 **4:** Does the result of running the following code surprise you? How do the select helpers deal with case by default? How can you change that default?
 
 `select(flights, contains("TIME"))`
 
+```{r}
+select(flights, contains("TIME"))
+```
 
+Yes, I'm surprised it disregarded case.
 
+The default is to ignore case; ignore.case = TRUE
+
+To fix this, you have to set this to FALSE
+
+```{r}
+select(flights, contains("TIME", ignore.case = FALSE))
+```
