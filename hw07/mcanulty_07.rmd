@@ -1,0 +1,58 @@
+---
+title: "HW 07: Data Importing and Wrangling 1"
+author: "Ryan McAnulty"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+#### Limpets
+## Loading tidyverse and reading limpets.csv data
+```{r}
+library(tidyverse)
+read_csv("limpets.csv")
+```
+
+The data is tidy.
+
+## Defining limpets_data and forcing column types
+```{r}
+limpets_data <- read_csv("limpets.csv", col_types = "ncc")
+```
+
+## Setting levels for Site 
+```{r}
+limpets_data$Site <- factor(limpets_data$Site, levels = c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNMM"), ordered = TRUE)
+```
+
+## Box plot of limpets_data Length (mm) vs. Site with Protected status colored
+```{r}
+ggplot(data = limpets_data) +
+  geom_boxplot(mapping = aes(x = Length, y = Site, color = Protected)) +
+  labs(x = "Length (mm)")
+```
+The DP and WP sites have some outliers longer than the rest of the data.  For the most part, the protected sites tend to have larger Limpets.
+
+#### Roseate Terns
+## Reading roseate_terns.txt
+```{r}
+read.csv("roseate_terns.txt")
+```
+
+## Naming data terns
+```{r}
+terns <- read.csv("roseate_terns.txt")
+```
+
+The data is not tidy
+
+```{r}
+terns %>% filter(complete.cases(.))
+```
+
+```{r}
+terns %>% 
+  pivot_longer(c("AR", "AL", "AC", "BR", "BL", "BC", "JR", "JL", "JC"), names_to = "sites")
+```
+
