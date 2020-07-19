@@ -100,9 +100,43 @@ For the most part, the Immature ones are the shortest and have fewer rings; they
 
 #### Chunk 4: 
 ```{r}
-print(abalone_data_no_outliers(any.abalone_data_no_outliers$Height == 0, "Height"]
+print(filter(abalone_data_no_outliers, "Height" > 0.0))
 is.na <- filter(abalone_data_no_outliers,Height==0)
 ggplot(data = abalone_data_no_outliers) +
   geom_point(mapping = aes(x = Height, y = Rings, color = Type))
 ```
 
+#### Chunk 5:  Scatter plots of Whole Weight vs. Age and Shucked Weight vs. Age of all three types of abalone.
+```{r}
+ggplot(data = abalone_data_no_outliers, mapping = aes(x = WholeWeight, y = Rings, color = Type, shape = Type)) +
+  geom_point() +
+  geom_jitter()
+
+ggplot(data = abalone_data_no_outliers, mapping = aes(x = ShuckedWeight, y = Rings, color = Type, shape = Type))+
+  geom_point() +
+  geom_jitter()
+
+```
+
+As the abalone age, they get heavier until they have about 7 or so Rings, then the weight doesn't really seem to correlate with age.
+Immature abalone tend to stay below 1 pound, Males and females vary.
+
+Again, the shucked weight vs. age follows very closely to thee whole weight vs. age.  I would think that the older the albalone, the more meat it would yeild, there shucked weight follows age a little more than wholeweight, but not nearly as much as I would have thought. 
+
+#### Darters
+## Importing Darters data.  Setting Columns, naming coloumns, and setting orders
+```{r}
+darter_data <- read_fwf(here("data", "darter.txt"), fwf_widths(c(3, 11, 1, 1, 1, 3, 4, 4, 4, 3, 3, 2, 2)), comment = "#")
+
+colnames(darter_data) <- c("Sample", "Species", "Riffle", "Age", "Sex", "Length", "Depth", "Velocity", "Temperature", "MajSub Proportion", "MinSub Proportion", "Major Type", "Minor Type")
+darter_data$Riffle <- factor(darter_data$Riffle,levels=c("1", "2"))
+darter_data$"Major Type" <- factor(darter_data$"Major Type",levels=c("s","fg", "sg", "lg", "c"), order = TRUE)
+```
+
+## Filtering out zonale and tetrazonum spcecies, removing MinSub and Min Type columns, renaming the MajSub Proportion and Major Type columns, aranging by Sample
+```{r}
+darter_plots <- darter_data %>% filter(Species != "zonale" & Species != "tetrazonum") %>% 
+  select(!"MinSub Proportion" & ! "Minor Type") %>% 
+  rename("major_substarte" = "MajSub Proportion", "major_type" = "Major Type") %>% 
+  arrange("Sample") %>% 
+```
