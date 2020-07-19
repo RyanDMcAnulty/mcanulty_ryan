@@ -11,14 +11,14 @@ editor_options:
 ## Loading tidyverse and reading limpets.csv data
 ```{r}
 library(tidyverse)
-read_csv("limpets.csv")
+library(here)
 ```
 
 The data is tidy.
 
 ## Defining limpets_data and forcing column types
 ```{r}
-limpets_data <- read_csv("limpets.csv", col_types = "ncc")
+limpets_data <- read_csv(here("data", "limpets.csv"), col_types = "ncc")
 ```
 
 ## Setting levels for Site 
@@ -35,24 +35,74 @@ ggplot(data = limpets_data) +
 The DP and WP sites have some outliers longer than the rest of the data.  For the most part, the protected sites tend to have larger Limpets.
 
 #### Roseate Terns
-## Reading roseate_terns.txt
+## Reading and Naming data terns
 ```{r}
-read.csv("roseate_terns.txt")
+terns <- read_tsv(here("data", "roseate_terns.txt"))
 ```
 
-## Naming data terns
+## Reviewing data
 ```{r}
-terns <- read.csv("roseate_terns.txt")
+terns
 ```
 
-The data is not tidy
-
+## Tidying data
 ```{r}
-terns %>% filter(complete.cases(.))
+terns_data <- terns %>% 
+  pivot_longer(c(AR:JC), names_to="Site",values_to="Population")
 ```
 
+## Confirming tidying
 ```{r}
-terns %>% 
-  pivot_longer(c("AR", "AL", "AC", "BR", "BL", "BC", "JR", "JL", "JC"), names_to = "sites")
+terns_data
+```
+
+## Filtering out NAs
+```{r}
+terns_complete_data <- filter(drop_na(terns_data))
+```
+
+## Line graph of Population vs. year of each site
+```{r}
+ggplot(data = terns_complete_data)+
+  geom_line(mapping=aes(x=Population,y=year,color=Site))+
+  labs(y="Year")
+```
+AC, AR, BC, JC obviously increase in population over time.
+
+BR, JR had obvious decreases in population over time.
+
+The line breaks come from haveing no data from that site in that year.
+
+#### Blacklip Abalone
+## Chunk 1: Reading abalone data, removing first column, and making a boxplot of each type
+```{r}
+abalone <- read_csv(here("data", "abalone.csv"))
+abalone_data <- select(abalone, -(X1))
+ggplot(data = abalone_data) +
+  geom_boxplot(mapping = aes(x = Height, y = Type))
+```
+
+## Chunk 2: Scatterplot of Height vs. Rings to determine if outliers are old
+```{r}
+ggplot(data = abalone_data) +
+  geom_point(mapping = aes(x = Height, y = Rings, color = Type))
+```
+No, it does not appear that the two outliers are exceptionally old, they both have <= 10 rings.
+
+## Chunk 3: Filtering out the two outliers as coding errors, Ordering Type from I to M to F.  Replotting to see trends.
+```{r}
+abalone_data_no_outliers <- filter(abalone_data, Height <= 0.3)
+factor(abalone_data_no_outliers$Type, levels = c("I", "M", "F"), ordered = TRUE)
+ggplot(data = abalone_data_no_outliers) +
+  geom_point(mapping = aes(x = Height, y = Rings, color = Type))
+```
+For the most part, the Immature ones are the shortest and have fewer rings; they are juveniles.  The males and females seem to be evenly dispersed with no real trends on height or rings bases on sex.
+
+#### Chunk 4: 
+```{r}
+print(abalone_data_no_outliers(any.abalone_data_no_outliers$Height == 0, "Height"]
+is.na <- filter(abalone_data_no_outliers,Height==0)
+ggplot(data = abalone_data_no_outliers) +
+  geom_point(mapping = aes(x = Height, y = Rings, color = Type))
 ```
 
