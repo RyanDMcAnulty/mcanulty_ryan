@@ -107,7 +107,7 @@ For the most part, the Immature ones are the shortest and have fewer rings; they
 ```{r}
 abalone_cleaned[abalone_cleaned$Height == 0, 'Height'] <- NA
 ggplot(data = abalone_cleaned) + 
-  geom_point(mapping = aes(x = Rings, y = Height, color = Type))
+  geom_point(mapping = aes(x = Height, y = Rings, color = Type))
 ```
 
 #### Chunk 5:  Scatter plots of Whole Weight vs. Age and Shucked Weight vs. Age of all three types of abalone.
