@@ -40,25 +40,30 @@ The DP and WP sites have some outliers longer than the rest of the data.  For th
 terns <- read_tsv(here("data", "roseate_terns.txt"))
 ```
 
-## Reviewing data
+## Viewing data
 ```{r}
 terns
 ```
 
 ## Tidying data
 ```{r}
-terns_data <- terns %>% 
+terns <- terns %>% 
   pivot_longer(c(AR:JC), names_to="Site",values_to="Population")
 ```
 
 ## Confirming tidying
 ```{r}
-terns_data
+terns
 ```
 
 ## Filtering out NAs
 ```{r}
-terns_complete_data <- filter(drop_na(terns_data))
+terns_complete_data <- filter(drop_na(terns))
+```
+
+## Confirming NAs removed
+```{r}
+terns_complete_data
 ```
 
 ## Line graph of Population vs. year of each site
@@ -91,31 +96,29 @@ No, it does not appear that the two outliers are exceptionally old, they both ha
 
 ## Chunk 3: Filtering out the two outliers as coding errors, Ordering Type from I to M to F.  Replotting to see trends.
 ```{r}
-abalone_data_no_outliers <- filter(abalone_data, Height <= 0.3)
-factor(abalone_data_no_outliers$Type, levels = c("I", "M", "F"), ordered = TRUE)
-ggplot(data = abalone_data_no_outliers) +
+abalone_cleaned <- filter(abalone_data, Height <= 0.3)
+factor(abalone_cleaned$Type, levels = c("I", "M", "F"), ordered = TRUE)
+ggplot(data = abalone_cleaned) +
   geom_point(mapping = aes(x = Height, y = Rings, color = Type))
 ```
 For the most part, the Immature ones are the shortest and have fewer rings; they are juveniles.  The males and females seem to be evenly dispersed with no real trends on height or rings bases on sex.
 
-#### Chunk 4: 
+#### Chunk 4: Assigned NA to Height = 0 and plotting results
 ```{r}
-print(filter(abalone_data_no_outliers, "Height" > 0.0))
-is.na <- filter(abalone_data_no_outliers,Height==0)
-ggplot(data = abalone_data_no_outliers) +
-  geom_point(mapping = aes(x = Height, y = Rings, color = Type))
+abalone_cleaned[abalone_cleaned$Height == 0, 'Height'] <- NA
+ggplot(data = abalone_cleaned) + 
+  geom_point(mapping = aes(x = Rings, y = Height, color = Type))
 ```
 
 #### Chunk 5:  Scatter plots of Whole Weight vs. Age and Shucked Weight vs. Age of all three types of abalone.
 ```{r}
-ggplot(data = abalone_data_no_outliers, mapping = aes(x = WholeWeight, y = Rings, color = Type, shape = Type)) +
+ggplot(data = abalone_cleaned, mapping = aes(x = WholeWeight, y = Rings, color = Type, shape = Type)) +
   geom_point() +
   geom_jitter()
 
-ggplot(data = abalone_data_no_outliers, mapping = aes(x = ShuckedWeight, y = Rings, color = Type, shape = Type))+
+ggplot(data = abalone_cleaned, mapping = aes(x = ShuckedWeight, y = Rings, color = Type, shape = Type))+
   geom_point() +
   geom_jitter()
-
 ```
 
 As the abalone age, they get heavier until they have about 7 or so Rings, then the weight doesn't really seem to correlate with age.
@@ -138,5 +141,38 @@ darter_data$"Major Type" <- factor(darter_data$"Major Type",levels=c("s","fg", "
 darter_plots <- darter_data %>% filter(Species != "zonale" & Species != "tetrazonum") %>% 
   select(!"MinSub Proportion" & ! "Minor Type") %>% 
   rename("major_substarte" = "MajSub Proportion", "major_type" = "Major Type") %>% 
-  arrange("Sample") %>% 
+  arrange("Sample")
 ```
+
+##Plot of Legth vs. Depth of each riffle for each species
+```{r}
+ggplot(data = darter_plots,mapping = aes(x = Length, y = Depth, color = Species, shape = Species)) +
+  geom_point() +
+  facet_wrap(~Riffle, ncol = 2) +
+  geom_jitter()
+```
+In Riffle 1, there aren't as many blennioides as in Riffle 2 and only one deeper than 30 cm.  Riffle 2 has no darters deeper than 50 cm, mostly no deeper than 30 cm, only blennioides past 22 cm.
+
+## Box plot of Length of each riffle for each species.
+```{r}
+ggplot(data = darter_plots,mapping = aes(x = Length, y = Species, color = Species)) +
+  geom_boxplot() +
+  facet_wrap(~Riffle, ncol = 2)
+```
+
+Riffle 1 shows one outlier, Riffle 2 has the most.
+
+## Box plot of Length of darters for each major type by Species and Riffle
+```{r}
+ggplot(data = darter_plots, mapping = aes(x = Length, y = major_type, color = Species))+
+  geom_boxplot() +
+  facet_grid(Species ~ Riffle)
+```
+
+## Same plot as above just with facet_grid variables switched.
+```{r}
+ggplot(data = darter_plots, mapping = aes(x = Length, y = major_type, color = Species))+
+  geom_boxplot() +
+  facet_grid(Riffle ~ Species)
+```
+The axes switch between (Species ~ Riffle) and (Riffle ~ Species)
