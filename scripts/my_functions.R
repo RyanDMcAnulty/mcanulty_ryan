@@ -19,12 +19,12 @@ std_err <- function(vector, na.rm = FALSE) {
 scaled_mass <- function(mass = FALSE, tarsus = FALSE, slope = FALSE) {
   ifelse (mass >= 0,   # Test: TRUE or FALSE
       mass <- mass,    # If test is true, keep mass as is
-      mass == 0)       # If test is false, set mass to 0
+      mass <-0)       # If test is false, set mass to 0
   ifelse (tarsus >= 0, # Same test on tarsus length  
       tarsus <- tarsus,
-      tarsus == 0)
+      tarsus <-0)
   ifelse (slope >= 0,  # Same test on slope value  
       slope <- slope, 
-      slope == 0)
+      slope <-0)
   mass * (((mean(tarsus)) / tarsus) ^ slope) # This does the calculations for the scaled_mass
 }
