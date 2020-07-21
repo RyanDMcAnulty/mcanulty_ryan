@@ -1,0 +1,339 @@
+---
+title: "HW 08: More Data Wrangling"
+author: "Ryan McAnulty"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+- Change "your name" in the YAML header above to your name.
+
+- As usual, enter the examples in code chunks and run them, unless told otherwise.
+## Loading tidyverse and nycflights13
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+## Chapter 5: Data transformation
+
+Read [R4ds Chapter 5: Data transformation](https://r4ds.had.co.nz/transform.html), sections 5-7.
+
+**You do not answer any of the questions this week.** Just read and run all of the examples as noted below. Pay attention to the code you enter for the examples. You will be applying the information in future assignments.
+
+### Section 5.5: Add new variables with `mutate()`
+
+Type and run all of the examples.
+
+Pay careful attention to the useful creation functions in section 5.5.1. 
+
+## Using mutate to add columns to end of dataset
+```{r}
+flights_sml <- select(flights,
+  year:day,
+  ends_with("delay"),
+  distance,
+  air_time
+)
+mutate(flights_sml,
+  gain = dep_delay-arr_delay,
+  speed = distance / air_time *60
+)
+```
+
+## Mutating further 
+```{r}
+mutate(flights_sml,
+  gain = dep_delay-arr_delay,
+  hours = air_time / 60,
+  gain_per_hour = gain / hours)
+```
+
+## Keeping only the new variables
+```{r}
+transmute(flights,
+  gain = dep_delay - arr_delay,
+  hours = air_time / 60,
+  gain_per_her = gain / hours
+  )
+```
+
+### Section 5.5.1: Useful creation functions
+## Using %/% and %%
+```{r}
+transmute(flights,
+  dep_time,
+  hour = dep_time %/% 100,
+  minute = dep_time %% 100
+  )
+```
+
+## Using lead() and lag ()
+```{r}
+(x <- 1:10)
+
+lag(x)
+
+lead(x)
+```
+
+## Using cumsum() and cummean()
+```{r}
+x
+
+cumsum(x)
+
+cummean(x)
+```
+## Ranking
+```{r}
+y <- c(1, 2, 2, NA, 3, 4)
+
+min_rank(y)
+
+min_rank(desc(y))
+```
+
+## Using row_number(), dense_rank(), percent_rank(), and cume_dist()
+```{r}
+row_number(y)
+
+dense_rank(y)
+
+percent_rank(y)
+
+cume_dist(y)
+```
+
+### Section 5.6: Grouped summaries with `summarise()`
+
+Read and run all of the examples. Pay careful attention to the useful summary functions. Unless you really like baseball, skip the baseball part of 5.6.3.
+
+## Using summarise
+```{r}
+summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+## Summarise() and group_by()
+```{r}
+by_day <- group_by(flights, year, month, day)
+summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+### Section 5.6.1: Combining multiple operations with the pipe
+```{r}
+by_dest <- group_by(flights, dest)
+delay <- summarise(by_dest,
+  count =n(),
+  dist = mean(distance, na.rm = TRUE),
+  delay = mean(arr_delay, na.rm = TRUE)
+)
+delay <- filter(delay, count >20, dest !="HNL")
+
+ggplot(data = delay, mapping = aes(x = dist, y = delay)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE)
+```
+## Same code using pipes
+```{r}
+delays <- flights %>% 
+  group_by(dest) %>% 
+  summarise(
+    count= n(),
+    dist = mean(distance, na.rm = TRUE),
+    delay = mean(arr_delay, na.rm = TRUE)
+  ) %>% 
+  filter(count > 20, dest !="HNL")
+```
+
+### Section 5.6.2: Missing Values
+
+## What is na.rm?
+## Not setting na.rm
+```{r}
+flights %>% 
+  group_by(year, month, day) %>% 
+  summarise(mean = mean(dep_delay))
+```
+
+## With na.rm
+```{r}
+flights %>% 
+  group_by(year, month, day) %>% 
+  summarise(mean = mean(dep_delay, na.rm = TRUE))
+```
+
+## Removing canceled flights
+```{r}
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+
+not_cancelled %>% 
+  group_by(year, month, day) %>%
+  summarise(mean = mean(dep_delay))
+```
+
+Read and run all of the examples.
+
+### 5.6.3: Counts
+## Using counts
+```{r}
+delays <- not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarise(
+    delay = mean(arr_delay)
+  )
+
+ggplot(data = delays, mapping = aes(x = delay)) +
+  geom_freqpoly(binwidth = 10)
+```
+
+## Scatterplot of # of flights vs. average delay
+```{r}
+delays <- not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarise(
+    delay = mean(arr_delay, na.rm = TRUE),
+    n = n()
+  )
+
+ggplot(data = delays, mapping = aes(x = n, y = delay)) + 
+  geom_point(alpha = 1/10)
+```
+
+## Focusing in on the data
+```{r}
+delays %>% 
+  filter(n > 25) %>% 
+  ggplot(mapping = aes(x = n, y = delay)) + 
+    geom_point(alpha = 1/10)
+```
+
+### Section 5.6.4: Useful summary functions
+
+## Using mean(x)
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(
+    avg_delay1 = mean(arr_delay),
+    avg_delay2 = mean(arr_delay[arr_delay > 0]) # Average positve delay
+  )
+```
+
+## Using measured spread
+```{r}
+not_cancelled %>% 
+  group_by(dest) %>% 
+  summarise(distance_sd = sd(distance)) %>% 
+  arrange(desc(distance_sd))
+```
+
+## Min and Max
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(
+    first = min(dep_time),
+    last = max(dep_time)
+  )
+```
+
+## Positions
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(
+    first_dep = first(dep_time),
+    last_dep = last(dep_time)
+  )
+
+```
+
+## Using filter to display all variables
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  mutate(r = min_rank(desc(dep_time))) %>% 
+  filter(r %in% range(r))
+```
+
+## Using counts to count a variable
+```{r}
+not_cancelled %>% 
+  group_by(dest) %>% 
+  summarise(carriers = n_distinct(carrier)) %>% 
+  arrange(desc(carriers))
+```
+
+## A simple count
+```{r}
+not_cancelled %>% 
+  count(dest)
+```
+
+## Summing to see how far a particular plane flew
+```{r}
+not_cancelled %>% 
+  count(tailnum, wt = distance)
+```
+
+## Number of early fligths
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(n_early = sum(dep_time < 500))
+```
+
+## What proportion delayed more than an hour
+```{r}
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(hour_prep = mean(arr_delay > 60))
+```
+
+### Section 5.6.5: Grouping by multiple variables
+```{r}
+daily <- group_by(flights, year, month, day)
+(per_day <- summarise(daily, flights = n()))
+(per_month <- summarise(per_day, flights = sum(flights)))
+(per_year <- summarise(per_month, flights = sum(flights)))
+```
+
+### 5.6.6: Ungrouping
+```{r}
+daily %>% 
+  ungroup() %>% 
+  summarise(fligths = n())
+```
+
+### Section 5.7: Grouped mutates (and filters)
+## Worst members of each group
+```{r}
+flights_sml %>% 
+  group_by(year, month, day) %>% 
+  filter(rank(desc(arr_delay)) < 10)
+```
+
+## Bigger than a threshold
+```{r}
+popular_dests <- flights %>% 
+  group_by(dest) %>% 
+  filter(n() > 365)
+popular_dests
+```
+
+## Compute per group metrics
+```{r}
+popular_dests %>% 
+  filter(arr_delay > 0) %>% 
+  mutate(prop_delay = arr_delay / sum(arr_delay)) %>% 
+  select(year:day, dest, arr_delay, prop_delay)
+```
+
+
