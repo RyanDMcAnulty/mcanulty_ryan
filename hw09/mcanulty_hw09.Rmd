@@ -1,0 +1,35 @@
+---
+title: "HW09: Wrangling II"
+author: "Ryan McAnulty"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Loading required libraries
+```{r}
+library(tidyverse)
+library(here)
+library(knitr)
+library(smatr)
+```
+
+## Sourcing my_functions.R
+```{r}
+source(here("scripts","my_functions.R"))
+```
+
+## Darters in riffles
+```{r}
+darters <- read.csv(here("data", "darters.csv"))  # Importing darters.csv and naming it "darters
+  
+darters_1 <- filter(darters, species != "tetrazonum" & species != "zonale") 
+darters_2 <- mutate(darters_1, total_substrate = majsub + minsub)
+darters_2
+
+darters_2$riffle[darters_2$riffle == 1] <- "Riffle 1" 
+darters_2$riffle[darters_2$riffle == 2] <- "Riffle 2"
+darters_3 <- mutate(length()
+```
+
