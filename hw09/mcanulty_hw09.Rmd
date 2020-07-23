@@ -20,7 +20,7 @@ library(smatr)
 source(here("scripts", "my_functions.R"))
 ```
 
-## Darters in riffles
+#### Darters in riffles
 ```{r}
 darters <-
   read.csv(here("data", "darters.csv"))  # Importing darters.csv and naming it "darters
@@ -28,16 +28,16 @@ darters <-
 darters_data <-
   darters %>%                            # Saving changes as darters_data
   filter(species != "tetrazonum" &
-           species != "zonale") %>%          # Removing species tetrazonum and zonale
+           species != "zonale") %>%      # Removing species tetrazonum and zonale
   mutate(
     total_substrate = majsub + minsub,
     # Making total_substrate column
-    riffle = ifelse(riffle == "1",         # Changing riffle values to Riffle 1 and Riffle 2
+    riffle = ifelse(riffle == "1",       # Changing riffle values to Riffle 1 and Riffle 2
                     "Riffle 1",
                     "Riffle 2"),
     length = length * 10,
     # Changing length from centimeters to millimeters
-    sex = ifelse(sex == "f",               # Changing sex to Female and Male
+    sex = ifelse(sex == "f",             # Changing sex to Female and Male
                  "Female",
                  "Male")
   )
@@ -114,5 +114,66 @@ ggplot(data = by_mean,
   labs(x = NULL,                  # Making sure x axis is not NULL
        y = "Length (mm)") +       # Changing y axis to Length (mm)
   coord_flip()                    # Flipping the coordinates 
+```
+
+#### Stress and corticosterones in birds
+```{r}
+feathers <-
+  read_csv(here("data", "feathers.csv"),
+           locale = locale(decimal_mark = ",")) %>%  # Impoting data "feathers.csv" and naming it feathers
+  rename(
+    capture_date = "Capture Date",                   # Renaming some columns, there were spaces in some
+    day = Date,                                      # column names thus the need for backticks.  This was corrected.
+    site = Site,
+    urban_score = "Urba Score",
+    cortF = "CortF ng/mg",
+    cortB = "CortF ng/mm",
+    sex = Sex,
+    smi = SMI,
+    tarsus = Tarsus,
+    mass = Mass,
+    basal_cort = Bas_Cort,
+    stress_cort = Stress_Cort
+  )
+```
+
+## Calculating the mean of the tarsus values and naming it mean_tarsus
+```{r}
+mean_tarsus <- mean(feathers$tarsus, na.rm = TRUE)
+```
+## Finding the value of b, slope 
+```{r}
+tarsus_wrangled <-
+  feathers %>%                             # Naming results of wrangled data
+  mutate(log_mass = log(mass),             # Mutating mass and tarsus to get their log transformations
+         log_tarsus = log(tarsus))
+major_axis <-
+  sma(log_mass ~ log_tarsus,               # Calculation of standardized major axis regression
+      data = tarsus_wrangled)
+summary(major_axis)                        # Visualizing the results to see the slope value
+
+major_axis_coef <-
+  coef(major_axis)                         # Using coef function to extract coefficients from major_axis
+b <-
+  major_axis_coef[c(2)]                    # Extracting slope coefficient to get b
+b
+feathers_wrangled <- 
+  mutate(tarsus_wrangled,                  # Creating a new smi calculation from sourced smi function from previous assignment
+         new_smi = scaled_mass(mass, tarsus, b))  
+select(feathers_wrangled, smi, new_smi)    # Comparing the calculated smi vs. the imported data for smi
+```
+
+## Summarising data showing mean and standard error of mean
+```{r}
+feathers_grouped <- group_by(feathers_wrangled, site)  # Grouping the data by site
+feathers_sum <- summarise(                             # Summarizing data for   
+  feathers_grouped,                                
+  basal_mean = mean(basal_cort, na.rm = TRUE),         # Mean of basal
+  stress_mean = mean(stress_cort, na.rm = TRUE),       # Mean of Stress
+  std_err_basal = std_err(basal_cort, na.rm = TRUE),   # Calculating standard mean of error for basal mean
+  std_err_cort = std_err(stress_cort, na.rm = TRUE),   # Calculating standard mean of error for stress mean
+  .groups = "drop"                                     # Preventing ungrouping
+)
+feathers_sum
 ```
 
