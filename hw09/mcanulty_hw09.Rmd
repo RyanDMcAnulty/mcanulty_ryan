@@ -17,19 +17,46 @@ library(smatr)
 
 ## Sourcing my_functions.R
 ```{r}
-source(here("scripts","my_functions.R"))
+source(here("scripts", "my_functions.R"))
 ```
 
 ## Darters in riffles
 ```{r}
-darters <- read.csv(here("data", "darters.csv"))  # Importing darters.csv and naming it "darters
-  
-darters_1 <- filter(darters, species != "tetrazonum" & species != "zonale") 
-darters_2 <- mutate(darters_1, total_substrate = majsub + minsub)
-darters_2
+darters <-
+  read.csv(here("data", "darters.csv"))  # Importing darters.csv and naming it "darters
 
-darters_2$riffle[darters_2$riffle == 1] <- "Riffle 1" 
-darters_2$riffle[darters_2$riffle == 2] <- "Riffle 2"
-darters_3 <- mutate(length()
+darters_data <-
+  darters %>%                            # Saving changes as darters_data
+  filter(species != "tetrazonum" &
+           species != "zonale") %>%          # Removing species tetrazonum and zonale
+  mutate(
+    total_substrate = majsub + minsub,
+    # Making total_substrate column
+    riffle = ifelse(riffle == "1",         # Changing riffle values to Riffle 1 and Riffle 2
+                    "Riffle 1",
+                    "Riffle 2"),
+    length = length * 10,
+    # Changing length from centimeters to millimeters
+    sex = ifelse(sex == "f",               # Changing sex to Female and Male
+                 "Female",
+                 "Male")
+  )
 ```
 
+##  Summarise data
+```{r}
+by_mean <-
+  darters_data %>%                             # Naming summary
+  group_by(species, riffle) %>%                # Grouping by species and riflles
+  summarise(
+    mean_length = mean(length, na.rm = TRUE),  # Setting up summary as mean of length, depth, and velocity
+    mean_depth = mean(depth, na.rm = TRUE),    # na.rm = TRUE accounts for any NA
+    mean_velocity = mean(velocity, na.rm = TRUE),
+    .groups = "drop"
+  )                                            # Dropping groups to get rid of error: summarise()` regrouping output by 'species' (override with `.groups` argument)
+```
+
+## Setting up summary in a table
+```{r}
+kable(by_mean)   #Tabling results
+```
