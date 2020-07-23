@@ -171,9 +171,43 @@ feathers_sum <- summarise(                             # Summarizing data for
   basal_mean = mean(basal_cort, na.rm = TRUE),         # Mean of basal
   stress_mean = mean(stress_cort, na.rm = TRUE),       # Mean of Stress
   std_err_basal = std_err(basal_cort, na.rm = TRUE),   # Calculating standard mean of error for basal mean
-  std_err_cort = std_err(stress_cort, na.rm = TRUE),   # Calculating standard mean of error for stress mean
+  std_err_stress = std_err(stress_cort, na.rm = TRUE),   # Calculating standard mean of error for stress mean
   .groups = "drop"                                     # Preventing ungrouping
 )
 feathers_sum
+```
+## Plot 1 of Stress and corticosternoes in birds
+```{r}
+ggplot(data = feathers_wrangled) +
+  geom_boxplot(mapping = aes(x = new_smi, y = site))
+```
+Site "Niort" has the most range of any site.  Median is within 2 units in all sites.
+
+## Plot 2
+```{r}
+ggplot() +
+  geom_point(data = feathers_wrangled,                # A scatter plot of basal cort levels by site
+             mapping = aes(x = site,
+                           y = basal_cort)) +
+  geom_errorbar(data = feathers_sum,                  # Setting up TIE Fighter Error bars for basal cort level
+                aes(
+                  x = site,
+                  ymin = basal_mean - std_err_basal,  # Setting ymin at -1 basal mean standard error unit 
+                  ymax = basal_mean + std_err_basal   # Setting ymax at +1 basal mean standard error unit
+                ))
+```
+# Plot 3
+```{r}
+ggplot() +
+  geom_point(data = feathers_wrangled,           # As above, but with stress cort level
+             mapping = aes(x = site, 
+                           y = stress_cort)) +
+  geom_linerange(                                # Setting up non Star Wars errors   
+    data = feathers_sum,
+    aes(
+      x = site,
+      ymin = stress_mean - std_err_stress,       # Setting ymin at -1 stress level standard error unit 
+      ymax = stress_mean + std_err_stress)        # Setting ymax at +1 stress level standard error unit
+  )
 ```
 
