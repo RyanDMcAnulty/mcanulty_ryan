@@ -35,12 +35,11 @@ darters_data <-
     riffle = ifelse(riffle == "1",       # Changing riffle values to Riffle 1 and Riffle 2
                     "Riffle 1",
                     "Riffle 2"),
-    length = length * 10,
-    # Changing length from centimeters to millimeters
+    length = length * 10,                # Changing length from centimeters to millimeters
     sex = ifelse(sex == "f",             # Changing sex to Female and Male
                  "Female",
                  "Male")
-  )
+)
 ```
 
 ##  Summarise data
@@ -52,33 +51,33 @@ by_mean <-
     mean_length = mean(length, na.rm = TRUE),  # Setting up summary as mean of length, depth, and velocity
     mean_depth = mean(depth, na.rm = TRUE),    # na.rm = TRUE accounts for any NA
     mean_velocity = mean(velocity, na.rm = TRUE),
-    .groups = "drop"
-  )                                            # Dropping groups to get rid of error: summarise()` regrouping output by 'species' (override with `.groups` argument)
+    .groups = "drop"                           # Dropping groups
+)
 ```
 
 ## Setting up summary in a table
 ```{r}
-kable(by_mean)   #Tabling results
+kable(by_mean)   # Tabling results
 ```
 
 ## Plot 1 of Darters
 ```{r}
 ggplot(data = by_mean,
-       mapping = aes(x = species, 
+       mapping = aes(x = species,
                      y = mean_length)) +
-  stat_summary(           
-    mapping = aes(x = species,    # Plotting stat summary of the length of each fish species   
+  stat_summary(
+    mapping = aes(x = species,    # Plotting stat summary of the length of each fish species
                   y = length),
     fun.ymin = min,               # Plotting min length of each fish species
     fun.ymax = max,               # Plotting max of each fish species
     fun.y = median,               # Plotting median of each fish species
-    data = darters_data,          #  Using data from the original data set for summary of stats
+    data = darters_data,          # Using data from the original data set for summary of stats
     na.rm = TRUE
   ) +
   geom_point(shape = 22,          # Using filled shape of green to show up better
-             fill = "green") +    
-  facet_wrap(~ riffle) +          # Setting facet warp with riffles
-  labs(x = NULL,                  # Making sure x axis is not NULL 
+             fill = "green") +
+  facet_wrap( ~ riffle) +         # Setting facet warp with riffles
+  labs(x = NULL,                  # Making sure x axis is NULL
        y = "Length (mm)") +       # Changing y axis to Length (mm)
   coord_flip()                    # Flipping the coordinates for clarity
 ```
@@ -88,10 +87,18 @@ There are more larger fish in riffle one than two for the other two species.
 
 ## Plot 2 of Darters
 ```{r}
-ggplot(data = by_mean,
+ggplot(data = darters_data,
        mapping = aes(x = species,
-                     y = mean_length)) +
-  stat_summary(
+                     y = length)) +
+  stat_summary(                   # Plotting a stat summary 
+    mapping = aes(x = species, 
+                  y = length),
+    fun.y = mean,                 # Plotting mean of each fish species
+    size = 3,                     # Setting size of points to 3
+    color = "maroon",             # Setting color to maroon
+    data = darters_data,          # Using original data
+    na.rm = TRUE) +
+    stat_summary(
     mapping = aes(x = species,    # Plotting stat summary of the length of each fish species
                   y = length),
     fun.y = median,               # Plotting median of each fish species
@@ -99,17 +106,8 @@ ggplot(data = by_mean,
     size = 2.2,                   # Setting size of point to 2.2
     data = darters_data,          # Using data from the original data set for summary of stats
     na.rm = TRUE
-  ) +
-  stat_summary(                   # Plotting another stat summary 
-    mapping = aes(x = species, 
-                  y = length),
-    fun.y = mean,                 # Plotting mean of each fish species
-    size = 3,                     # Setting size of points to 3
-    color = "maroon",             # Setting color to maroon
-    data = darters_data,          # Using original data
-    na.rm = TRUE
-  ) +
-  geom_point(color = "gray68") +  # Remembering that ggplot plots by layers, so moving to end so that they show up, using color gray68
+    ) +
+  geom_point(color = "gray68") +  # Displaying all length points in gray68
   facet_wrap( ~ riffle) +         # Setting facet warp with riffles
   labs(x = NULL,                  # Making sure x axis is not NULL
        y = "Length (mm)") +       # Changing y axis to Length (mm)
@@ -134,7 +132,7 @@ feathers <-
     mass = Mass,
     basal_cort = Bas_Cort,
     stress_cort = Stress_Cort
-  )
+)
 ```
 
 ## Calculating the mean of the tarsus values and naming it mean_tarsus
@@ -157,9 +155,9 @@ major_axis_coef <-
 b <-
   major_axis_coef[c(2)]                    # Extracting slope coefficient to get b
 b
-feathers_wrangled <- 
+feathers_wrangled <-
   mutate(tarsus_wrangled,                  # Creating a new smi calculation from sourced smi function from previous assignment
-         new_smi = scaled_mass(mass, tarsus, b))  
+         new_smi = scaled_mass(mass, tarsus, b))
 select(feathers_wrangled, smi, new_smi)    # Comparing the calculated smi vs. the imported data for smi
 ```
 
@@ -171,11 +169,12 @@ feathers_sum <- summarise(                             # Summarizing data for
   basal_mean = mean(basal_cort, na.rm = TRUE),         # Mean of basal
   stress_mean = mean(stress_cort, na.rm = TRUE),       # Mean of Stress
   std_err_basal = std_err(basal_cort, na.rm = TRUE),   # Calculating standard mean of error for basal mean
-  std_err_stress = std_err(stress_cort, na.rm = TRUE),   # Calculating standard mean of error for stress mean
-  .groups = "drop"                                     # Preventing ungrouping
+  std_err_stress = std_err(stress_cort, na.rm = TRUE), # Calculating standard mean of error for stress mean
+  .groups = "drop"                                     # Dropping groups
 )
 feathers_sum
 ```
+
 ## Plot 1 of Stress and corticosternoes in birds
 ```{r}
 ggplot(data = feathers_wrangled) +
@@ -193,10 +192,11 @@ ggplot() +
                 aes(
                   x = site,
                   ymin = basal_mean - std_err_basal,  # Setting ymin at -1 basal mean standard error unit 
-                  ymax = basal_mean + std_err_basal   # Setting ymax at +1 basal mean standard error unit
-                ))
+                  ymax = basal_mean + std_err_basal)  # Setting ymax at +1 basal mean standard error unit
+)
 ```
-# Plot 3
+
+## Plot 3
 ```{r}
 ggplot() +
   geom_point(data = feathers_wrangled,           # As above, but with stress cort level
