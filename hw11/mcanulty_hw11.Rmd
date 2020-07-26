@@ -1,0 +1,71 @@
+---
+title: "HW11: Data Visualization I (con't)"
+author: "Ryan McAnulty"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Loading required libraries
+```{r}
+library(tidyverse)
+library(here)
+library(GGally)
+library(patchwork)
+```
+
+## Importing aegla_crabs.csv data
+```{r}
+aegla <-                            # Importing and naming aegla_crabs.csv data
+  read.csv(here("data", 
+                "aegla_crabs.csv"))
+aegla_wrangled <- aegla %>%         # Wrangling data
+  select(-"Site",                   # Removing columns Site, AT, WT, Crab, Shrimp, Aeglam, AeglaFE, and AeglaFo
+         -"AT",
+         -"WT",
+         -"Crab",
+         -"Shrimp",
+         -"Aeglam",
+         -"AeglaFe",
+         -"AeglaFo") %>% 
+  drop_na() %>%                     # Dropping remaining NAs
+  mutate(box_group = "row_order")   # Creating arbitrary variable for plotting purposes
+```
+
+
+##  Looking for possible outliers
+```{r}
+aegla_wrangled %>% ggscatmat(columns = 1:13) # It is tiny in the notebook, but looking at it in the console obvious outliers can be seen. After looking at these and running multiple cleveland plots, I think these are the three possible outlier data points, as displayed by the three plots below.
+```
+
+## Displaying three cleveland plots to determine true outliers
+```{r}
+aegla_wrangled %>%
+  ggplot(aes(x = Depth,
+             y = Width)) +
+  geom_point() +
+  labs(x = "Depth",
+       y = "Width")
+
+aegla_wrangled %>%
+  ggplot(aes(x = pH,
+             y = Cond)) +
+  geom_point() +
+  labs(x = "ph",
+       y = "Cond")
+
+aegla_wrangled %>%
+  ggplot(aes(x = Phos,
+             y = Ca)) +
+  geom_point() +
+  labs(x = "Phos",
+       y = "Ca")
+
+```
+
+I could see all of these three points as outliers, but the pH of 6.25 and Conductivity of 11 is the weakest one.  
+The pH is not that low at all and there are lower Conductivity levels elsewhere.  I would ultimately say that the 
+Phosphorus concentration of 0.88 from site AG1KN1 is insanely high compared to every other sample and must be due 
+to an agricultural contamination.  Looking at original data, it is also only one of two sites where no data from 
+specimen counts is available.
