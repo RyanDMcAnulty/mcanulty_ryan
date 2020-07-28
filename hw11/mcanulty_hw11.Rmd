@@ -30,9 +30,9 @@ aegla_wrangled <- aegla %>%         # Wrangling data
          -"AeglaFe",
          -"AeglaFo") %>% 
   drop_na() %>%                     # Dropping remaining NAs
-  mutate(box_group = "row_order")   # Creating arbitrary variable for plotting purposes
+  mutate(row_order = 1:nrow(.))     # Creating arbitrary variable for plotting purposes. Setting number of rows 1 to 55.
+aegla_wrangled
 ```
-
 
 ##  Looking for possible outliers
 ```{r}
@@ -43,29 +43,28 @@ aegla_wrangled %>% ggscatmat(columns = 1:13) # It is tiny in the notebook, but l
 ```{r}
 aegla_wrangled %>%
   ggplot(aes(x = Depth,
-             y = Width)) +
+             y = row_order)) +
   geom_point() +
   labs(x = "Depth",
-       y = "Width")
-
+       y = "row_order")
 aegla_wrangled %>%
   ggplot(aes(x = pH,
-             y = Cond)) +
+             y = row_order)) +
   geom_point() +
   labs(x = "ph",
-       y = "Cond")
-
+       y = "row_order")
 aegla_wrangled %>%
   ggplot(aes(x = Phos,
-             y = Ca)) +
+             y = row_order)) +
   geom_point() +
   labs(x = "Phos",
-       y = "Ca")
-
+       y = "row_order")
 ```
-
-I could see all of these three points as outliers, but the pH of 6.25 and Conductivity of 11 is the weakest one.  
-The pH is not that low at all and there are lower Conductivity levels elsewhere.  I would ultimately say that the 
+Three possible outliers are depth being 5, pH being 6.25, and Phos Concentration being 0.88.
+I could see all of these three points as outliers, but the pH of 6.25 and Depth of 5 are the weakest ones.  The pH 
+is not that low at all compared to the other values.  The depth at 5 is an is high, but it also corresponds to the 
+width of the stream being 12.  This slighlty deeper and wider part is certainly possible.  I would ultimately say that the 
 Phosphorus concentration of 0.88 from site AG1KN1 is insanely high compared to every other sample and must be due 
 to an agricultural contamination.  Looking at original data, it is also only one of two sites where no data from 
 specimen counts is available.
+
