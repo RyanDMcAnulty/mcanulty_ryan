@@ -1,0 +1,112 @@
+---
+title: "HW12: Dates"
+author: "Ryan McAnulty"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Loading required libraries
+```{r}
+library(tidyverse)
+library(here)
+library(lubridate)
+```
+
+## Sourcing my_functions
+```{r}
+source(here("scripts", "my_functions.R"))
+```
+
+#### Part 1: Play Date
+## Inserting date code chunk
+```{r}
+birth_date <- "12/06/1984"
+
+# Elizabeth Garret Anderson was the first female physician
+anderson <- "9 June 1836"
+
+# Mary Anning discovered the first complete Plesiosaur fossil,
+# and other important Jurassic fossils
+anning <-  "1799/05/21"
+
+# Alice Augusta Ball was a chemist who developed the# first injectable treatment for leprosy.
+ball <- "July 24, 1892"
+
+# Sylvia Earle was the first chieft scientist at NOAA
+earle <- "August, 30 (1935)"
+
+# Rosalind Franklin used x-ray diffraction to# discover DNA structure. Watson and Crick claimed credit.
+franklin <- "25th of July, 1920"
+
+# Ester Lederberg was the first to discover that viruses
+# infect bacteria. Led to discovery of lambda bacteriophage
+lederberg <- "December 18, 1922"
+
+# Barbara McClintock discovered transposable elements (jumping genes),
+# and developed staining techniques to study chromosomes
+mcclintock <- "16061902"
+
+# Let's also remember a dream
+mlk_birth <- "1/15/29"
+mlk_dream <- "1963 August 28"
+```
+
+## Question 1 Convert each date to POSIXct format, usinglubridatefunctions, saving each to a unique variable.Print each result.
+```{r}
+(birth_date_po <- mdy(birth_date))
+(anderson_po <- dmy(anderson))
+(anning_po <- ymd(anning))
+(ball_po <- mdy(ball))
+(earle_po <- mdy(earle))
+(franklin_po <- dmy(franklin))
+(lederberg_po <- mdy(lederberg))
+(mcclintock_po <- dmy(mcclintock))
+(mlk_birth_po <- dmy(mlk_birth))
+(mlk_dream_po <- ymd(mlk_dream))
+```
+## Question 2 Check yours dates to be sure they are correct. If you spot any errors, correct them now using the properlubridatefunction(s).
+```{r}
+(mlk_birth_po_fix <-        # Fixing the mlk_birth date using make_date
+   make_date(year = 1929, 
+             month = 01, 
+             day = 15))
+```
+## Question 3 What day of the week were you born on? Show the full day name, not the abbreviated name or the daynumber.
+```{r}
+weekdays(birth_date_po)
+```
+
+## Question 4 What day of the week will your birthday be on this year? Use lubridate’s update function. You must figure out how to do it entirely by code for full points (no hard-coding). In other words, your code should work just as well next year or five years in the future, without editing.
+```{r}
+birth_date_po %>%
+  update(year = year(now())) %>% # Extracting the year from the now function to use with weekdays function
+  weekdays()
+```
+## Question 5 What day of the week would your birthday be on in the Year 2525, if Man is still alive? How old would you be? Here you may hard-code 2525. Show the abbreviated day of the week.
+```{r}
+birth_date_po %>%
+  update(year = 2525) %>%         # Hardcoding 2525 
+  weekdays(abbreviate = TRUE)     # Setting to abbreviate weekday
+Age = 2525 - year(birth_date_po)  # Calculating age from 2525
+Age                               # Displaying age in that year
+```
+## Question 6 How many days was it between the birth of Dr. Elizabeth Garrett Anderson and Alice Augusta Ball?
+```{r}
+Days_ball_anderson <- ball_po - anderson_po
+Days_ball_anderson
+```
+## Question 7 What is the duration between Martin Luther King Jr.’s birth date and hisI Had a Dream speech?
+```{r}
+Days_mlk <- mlk_dream_po - mlk_birth_po_fix
+as.duration(Days_mlk)
+```
+```{r}
+dates <- c(birth_date_po, anderson_po, anning_po, ball_po, earle_po, franklin_po, lederberg_po, mcclintock_po)
+names_dates <- c('McAnulty', "Anderson", "Anning", "Ball", "Earle", "Franklin", "Lederberg", "McClintock")
+leap_year(dates)
+Days_since = dates - birth_date_po
+Days_since
+```
+
