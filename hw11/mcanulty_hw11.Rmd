@@ -31,7 +31,6 @@ aegla_wrangled <- aegla %>%         # Wrangling data
          -"AeglaFo") %>% 
   drop_na() %>%                     # Dropping remaining NAs
   mutate(row_order = 1:nrow(.))     # Creating arbitrary variable for plotting purposes. Setting number of rows 1 to 55.
-aegla_wrangled
 ```
 
 ##  Looking for possible outliers
@@ -39,22 +38,22 @@ aegla_wrangled
 aegla_wrangled %>% ggscatmat(columns = 1:13) # It is tiny in the notebook, but looking at it in the console obvious outliers can be seen. After looking at these and running multiple cleveland plots, I think these are the three possible outlier data points, as displayed by the three plots below.
 ```
 
-## Displaying three cleveland plots to determine true outliers
+## Displaying three cleveland plots to determine true outliers after reviewing above plots
 ```{r}
 aegla_wrangled %>%
-  ggplot(aes(x = Depth,
+  ggplot(aes(x = Depth,           # Testing Depth outlier    
              y = row_order)) +
   geom_point() +
   labs(x = "Depth",
        y = "row_order")
 aegla_wrangled %>%
-  ggplot(aes(x = pH,
+  ggplot(aes(x = pH,              # Testing pH outlier
              y = row_order)) +
   geom_point() +
   labs(x = "ph",
        y = "row_order")
 aegla_wrangled %>%
-  ggplot(aes(x = Phos,
+  ggplot(aes(x = Phos,            # Testing Phos Concentration outlier
              y = row_order)) +
   geom_point() +
   labs(x = "Phos",
@@ -62,9 +61,111 @@ aegla_wrangled %>%
 ```
 Three possible outliers are depth being 5, pH being 6.25, and Phos Concentration being 0.88.
 I could see all of these three points as outliers, but the pH of 6.25 and Depth of 5 are the weakest ones.  The pH 
-is not that low at all compared to the other values.  The depth at 5 is an is high, but it also corresponds to the 
-width of the stream being 12.  This slighlty deeper and wider part is certainly possible.  I would ultimately say that the 
+is not that low at all compared to the other values.  The depth at 5 is high, but it also corresponds to the 
+width of the stream being 12.  This slighlty deeper and wider part of the stream is certainly possible.  I would ultimately say that the 
 Phosphorus concentration of 0.88 from site AG1KN1 is insanely high compared to every other sample and must be due 
 to an agricultural contamination.  Looking at original data, it is also only one of two sites where no data from 
 specimen counts is available.
 
+## Making Cleveland plots of N, Ni, Nt, and Cond, putting in 2x2 grid (A very slight look into the Nitrogen Cycle)
+```{r}
+p_N <-
+  aegla_wrangled %>%                # Saving Nitrogen Concentration as p_N
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = N))
+
+p_Ni <- aegla_wrangled %>%          # Saving Nitrate Concentration as p_Ni
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Ni))
+             
+p_Nt <- aegla_wrangled %>%          # Saving Nitrite COncentration as p_Nt
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Nt))
+
+p_Cond <- aegla_wrangled %>%        # Saving Conductivity as p_Cond
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Cond))
+
+p_N + p_Ni + p_Nt + p_Cond
+```
+The Nitrogen concentrations are mostly in bands of none at all, 0.1, 0.2, and 0.3 with some higher concentrations.  This shows that possibly more precise testing or data recording needs to be done.
+The Nitrate concentration centers around none at all with some grouping at 0.10 and 0.07.  A pretty wide sampling.
+Nitrite concentration has two bands of none and .001 with several with higher concentrations.  Again, depending on what is being analyzed, possibly more accurate testing could be perfromed.
+The conductivity is all over the place, no real relationships here.
+
+## Making historgram for Flow, pH, Width
+```{r}
+h1_Flow <- aegla_wrangled %>%
+  ggplot() +
+  geom_histogram(
+    aes(x = Flow),              # Making a histogram for Flow
+    binwidth = .01,             # Setting binwidth to .01
+    boundary = 0,
+    closed = "right",
+    color = "black"
+  )
+
+h1_pH <- aegla_wrangled %>%
+  ggplot() +
+  geom_histogram(
+    aes(x = pH),                # Making a histogram for pH
+    binwidth = .01,             # Setting binwidth to .01
+    boundary = 0,
+    closed = "right",
+    color = "black"
+  )
+
+h1_Width <- aegla_wrangled %>%
+  ggplot() +
+  geom_histogram(
+    aes(x = Width),             # Making a histrogram for Width
+    binwidth = .1,              # Setting binwidth to 0.1
+    boundary = 0,
+    closed =  "right",
+    color = "black"
+  )
+
+h1_Flow                         # Displaying the three histograms
+h1_pH
+h1_Width
+```
+I felt that these three had the most normalization of any of the variables, thus best for histograms.
+I chose the binwidths of .01, .01, and .1 respectively due to data being lost are spaced out even more than it is at other values.
+Flow does seem to center around 0.4 with some variance.
+pH is mostly neutral but has some variance.
+Width centers around 6.0 also, 2.5 also with some variance.
+In my opinion, as meaningless at this point in my career as it might be, there just isn't enough data points per variable to really see any meaningful trends in these variables. The more data points, the more trends can be seen.
+
+## Producing density plots for Flow, pH, and Width
+```{r}
+d_Flow <- aegla_wrangled %>%
+  ggplot(aes(x = Flow)) +       # Making a density plot for Flow
+  geom_density()
+
+d_pH <- aegla_wrangled %>%      # Making a density plot for pH
+  ggplot(aes(x = pH)) +
+  geom_density()
+
+d_Width <- aegla_wrangled %>%   # Making a density plot for Width
+  ggplot(aes(x = Width)) +
+  geom_density()
+
+d_Flow                          # Displaying the density plots
+d_pH
+d_Width
+```
+
+The first two density plots follows what I found in the histograms, but the Width plot shows more of a grouping around 2.7 or so than i noticed.
+
+## Displaying all three histograms and density plots in a 2  x 3 matrix
+```{r}
+h1_Flow + d_Flow + h1_pH + d_pH + h1_Width + d_Width + plot_layout(ncol = 2, nrow = 3)
+```
+This display of all six plots is much more handy than going back and forth and reviewing each separately
+
+## Running ggpairs to show relationships between variables.
+```{r}
+aegla_wrangled %>%
+  ggpairs()
+```
+The strongest correlation that I can see is Cond vs. TDS with a coorelation factor of 0.997. Which this makes sense, the more solids to conduct, the more conductivity.   Depth vs. Width also has a 0.733.  pH vs. Cond and TDS has almost the same coorelation of 0.536 and 0.535 respectively. Nitrogen, Magnesium, and Calcium Concentrations vs. Cond is very stong, with Calcium having a negative relationship.  There are some more coorelations that can be made, but for the most part most of the others shows no relation.  This ggpairs is awesome, very fun to play around with. 
