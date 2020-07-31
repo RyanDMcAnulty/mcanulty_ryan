@@ -15,7 +15,8 @@ library(ggthemes)
 library(gghighlight)
 ```
 
-## Sourcing my_functions
 ```{r}
-source(here("scripts", "my_functions.R"))
+beta <- read_lines(here("data", "beta_gliadin.txt"),skip = 1)
+beta
 ```
+
