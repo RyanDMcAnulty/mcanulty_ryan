@@ -1,0 +1,21 @@
+---
+title: "HW12: Dates"
+author: "Ryan McAnulty"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Loading required libraries
+```{r}
+library(tidyverse)
+library(here)
+library(ggthemes)
+library(gghighlight)
+```
+
+## Sourcing my_functions
+```{r}
+source(here("scripts", "my_functions.R"))
+```
