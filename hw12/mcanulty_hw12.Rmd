@@ -102,11 +102,217 @@ Days_ball_anderson
 Days_mlk <- mlk_dream_po - mlk_birth_po_fix
 as.duration(Days_mlk)
 ```
+## Question 8
 ```{r}
-dates <- c(birth_date_po, anderson_po, anning_po, ball_po, earle_po, franklin_po, lederberg_po, mcclintock_po)
-names_dates <- c('McAnulty', "Anderson", "Anning", "Ball", "Earle", "Franklin", "Lederberg", "McClintock")
-leap_year(dates)
-Days_since = dates - birth_date_po
-Days_since
+dates <- c(anderson_po,                   # Setting birth dates as a vector 
+           anning_po, 
+           ball_po, 
+           earle_po, 
+           franklin_po, 
+           lederberg_po, 
+           mcclintock_po, 
+           birth_date_po)
+names(dates) <- c("Anderson",             # naming each birth date
+                 "Anning", 
+                 "Ball", 
+                 "Earle", 
+                 "Franklin", 
+                 "Lederberg", 
+                 "McClintock", 
+                 "McAnulty")
+dates[leap_year(dates)] %>%               # Displaying leap years
+  year()
+
+days_since = birth_date_po - dates        # Calculating days between my birthdate and the female scientists
+
+sort(desc(days_since))                    # Listing days since
 ```
 
+#### Part 2: Wrangling and plotting with dates
+
+
+#### Part 2: Wrangling and Plotting with Dates
+## Lake Ice Data od ice cover from Lake Mendota from the 1852-53 to 2012-13 season
+```{r}
+lake_ice <-                                   # Naming Lake_ice.csv
+  read_csv(here("data",                       # Importing lake_ice.csv
+                "lake_ice.csv"),
+           na = c("-999"))                    # Setting what NA is in the data 
+lake_ice_wrangled <-
+  lake_ice %>%
+  filter(lakename == "LAKE MENDOTA") %>%      # Displaying data only from from site Lake Mendota
+  select(iceon_year:iceoff_day) %>%           # Displaying only dates with ice on and ice off data
+  mutate(
+    ice_on = make_date(iceon_year,            # Making a column of when ice appeared on the lake
+                       iceon_month,
+                       iceon_day),
+    ice_off = make_date(iceoff_year,          # Making a column of when completely melted off of the lake
+                        iceoff_month,
+                        iceoff_day),
+    duration = as.numeric(ice_off - ice_on)   # Making a column of how long in DAYS ice was on the lake
+  )
+```
+
+## Plot of Lake Mendota ice cover from 1852-53 to 2012-13 season
+```{r}
+lake_ice_wrangled %>%                 # Using lake_ice data for plot
+  ggplot(mapping = aes(      
+    x = iceon_year,          # Setting x and y axes
+    y = duration)) +
+  geom_line(na.rm = TRUE) +  # removing NAs  
+  labs(x = "Year",           # Renaming axes to something more understandable   
+       y = "Ice Duration (days)")
+```
+
+It's obvious that there has been less ice coverage (duration) on this lake over the last 150 + years.
+This could be used as evidence of global warming.
+
+#### Soil Carbon Dioxide
+```{r}
+soil_co2 <- read_tsv(     # Naming soil co2 data
+  here("data",            # Importing soil co2 data
+       "soil_co2.txt"))
+```
+## Setting POSIXct date for 01 January 2006
+```{r}
+soil_date <- dmy("01 January 2006")
+```
+## Wrangling data
+```{r}
+soil_co2_wrangled <- soil_co2 %>%
+  rename(
+    "Day" = "DayN[]",           # Making column names syntactic
+    "Datacode" = "Datecode[]",
+    "Min" = "Min[]",
+    "Veg" = "Veg[]",
+    "Plot" = "Plot[]",
+    "Group" = "Group[]",
+    "Corr_Co2" = "CorrCO2[]",
+    "SoilT" = "SoilT[]") %>%
+  mutate(
+    Date = soil_date + Day,     # Making a Date, Year, and Month column 
+    Year = year(Date),
+    Month = month(Date, 
+                  label = TRUE)
+)
+soil_co2_year_month <-          # Making a group by Year and Month 
+  group_by(soil_co2_wrangled, 
+           Year, 
+           Month        
+)
+```
+
+
+## Summarizing data
+```{r}
+soil_co2_sum <-                             # Naming soil summary
+  soil_co2_year_month %>%
+  summarise(
+    mean_Co2 = mean(Corr_Co2,               # Summarizing by mean of Co2
+                    na.rm = TRUE),           
+    std_err_Co2 = std_err(Corr_Co2,         # Summarizing by std_err of Co2
+                          na.rm = TRUE),
+    .groups = "drop"                        # Dropping grouping
+  )
+```
+
+## Error plot of data
+```{r}
+soil_co2_sum %>%
+  ggplot(mapping = aes(x = Month,                  # Setting x and y axes
+                       y = mean_Co2)) +
+  geom_col() +                                     # Making a bar graph of data
+  geom_linerange(aes(ymin =                        # Setting y min at 1 std
+                       mean_Co2 - std_err_Co2, 
+                     ymax =                        # Setting y max at 1 std
+                       mean_Co2 + std_err_Co2)) +
+  facet_wrap( ~ Year)                              # seperating into multiple plots by year
+```
+## Error plot with points same as above, just as a scatter plot 
+```{r}
+soil_co2_sum %>% 
+  ggplot(mapping = aes(x = Month, 
+                       y = mean_Co2)) +
+  geom_point() +
+  geom_linerange(aes(ymin = 
+                       mean_Co2 - std_err_Co2,
+                     ymax = mean_Co2 + std_err_Co2)) +
+  facet_wrap(~Year)
+```
+Something happened in 2009 to get such high numbers, it woud be interesting to see what happened.
+
+#### Mississippi River Discharge
+## Importing and wrangling data
+```{r}
+river_thebes <- 
+  read_csv(here("data",
+                "thebes_discharge.csv"))
+river_thebes_tidy <- 
+  river_thebes %>% 
+  pivot_longer("1988":"2018",
+               names_to = "Year",
+               values_to = "Discharge") %>% 
+  mutate(Discharge = Discharge/1000) %>% 
+  group_by(Year, Month)
+```
+
+```{r}
+river_sum <- 
+  river_thebes_tidy %>%
+  summarise(mean_Discharge = 
+              mean(Discharge,
+                   na.rm = TRUE),
+            .groups = "drop") %>%
+  mutate(
+    Event = case_when(
+      Year == 1993 | 
+        Year == 2011 ~ "Flood",
+      Year == 1988 | 
+        Year == 2012 ~ "Drought",
+      TRUE ~ "Normal") 
+)
+```
+
+# Creating smaller data set for these "Event" years
+```{r}
+river_event <- river_sum %>% 
+  filter(Year %in% c(1988,
+                     1993,
+                     2011,
+                     2012))
+river_event
+```
+
+# Plotting river_sum data as Month vs. mean_Discharge
+```{r}
+p1 <- river_sum %>%                          # Naming this plot p1
+  mutate(Month = month(Month,                # Mutating Month to display as abbreviated characters  
+                       label = TRUE)) %>% 
+  ggplot(mapping = aes(x = Month,            # Setting axes
+                       y = mean_Discharge, 
+                       group = Year)) +      # Grouping months by year 
+    geom_line(aes(),color = "gray70",        # Plotting as a line plot, Setting color as gray70 at size 0.3
+              size = 0.3) +
+    labs(y = "Discharge (cf/s, thousands)"   # Renaming labels
+)
+p1
+```
+
+# Adding in Event data set by layers
+```{r}
+river_sum %>%                                # First part is the same as above
+  mutate(Month =
+           month(Month, 
+                 label = TRUE)) %>%
+  ggplot(mapping = aes(x = Month, 
+                       y = mean_Discharge, 
+                       group = Year)) +
+  geom_line(aes(),
+            color = "gray70",
+            size = 0.3) +
+  geom_line(river_event,                     # Changing data set to river_event
+            mapping = aes(color = Event))    # Changing color aes to correspond with the Events
+```
+
+The years other than drought and flood is pretty consistent.
+Amazing how much worse 2011 was than 1993.
