@@ -14,12 +14,21 @@ library(here)
 library(ggthemes)
 library(gghighlight)
 ```
-
+## From many strings to one
 ```{r}
-beta <- read_lines(here("data", "beta_gliadin.txt"),skip = 1)
-                   
-beta %>% 
-  str_remove_all("[:digit:]") %>% 
-  str_remove_all("[:space:]")
+beta <-                                   # Naming imported data
+  read_lines(here("data",                 # Importing "beta_gliadin.txt"   
+                  "beta_gliadin.txt"),
+                  skip = 1)               # Skipping meta data
+
+DNA <- beta %>%                           # Saving changes
+  str_replace_all("[:digit:]",            # Removing numerals and replacing with nothing
+                  "") %>%         
+  str_replace_all("[:space:]",            # Removing white spaces and replacing with nothing
+                  "") %>%          
+  str_c(collapse = "") %>%                # Collapsing 56 strings into one
+  str_to_upper()                          # Converting to all Upper case characters
+
+DNA                                       # Displaying string to prove changes worked
 ```
 
