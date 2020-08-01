@@ -17,6 +17,9 @@ library(gghighlight)
 
 ```{r}
 beta <- read_lines(here("data", "beta_gliadin.txt"),skip = 1)
-beta
+                   
+beta %>% 
+  str_remove_all("[:digit:]") %>% 
+  str_remove_all("[:space:]")
 ```
 
