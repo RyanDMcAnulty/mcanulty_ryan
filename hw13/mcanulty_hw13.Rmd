@@ -30,22 +30,78 @@ DNA <- beta %>%                           # Saving changes
   str_to_upper()                          # Converting to all Upper case characters
 
 DNA                                       # Displaying string to prove changes worked
+str_count(DNA)
 ```
+There are 3310 characters
 ## Sequence analysis: find the promoter region
 ## Counting non ACTG
 ```{r}
 str_count(DNA,
           "[^ACTG]")   # REGEX anything but
 ```
+There are 0 non A, C, T, or G characters.
 
 # Counting starting codon ATG
 ```{r}
 str_count(DNA,
           "ATG")
 ```
+66 ATGs.
+
 ## Counting stop codon TGA or TAA
 ```{r}
 str_count(DNA, 
           "TGA|TAA")  # or
+```
+99 TGAs or TAAs.
+
+## Finding Promoter region
+## Assigning "CAAT box" and "TATA box"
+```{r}
+caat_box <- "CCAAT"
+tata_box <- "CTATAA"
+```
+## Counting strings
+```{r}
+str_count(DNA,  
+          caat_box)                    # There are 4 instances of "CCAAT" in the string
+str_count(DNA, 
+          tata_box)                    # There is 1 instance of #CTATAA" in the string 
+
+caat_seq <- "CCAAT.{100,150}ATG"       # Making a sequence search that searches for a sequence that starts with "CCAAT" and ends with the stop codon "ATG" with 100 to 150 nucleotides in between
+str_count(DNA, 
+          caat_seq)                    # There are 2 such sequences
+tata_seq <- "CTATAA.{50,100}ATG"       # Making a sequence search that searches for a sequence that starts with "CTATAA" and ends with the stop codon "ATG" with 50 to 100 nucleotides
+str_count(DNA, 
+          tata_seq)                    # Just 1 of these
+caat_seqs_all <- 
+  str_extract_all(DNA,                 # Extracting the two "CTATAA" sequences
+                  caat_seq, 
+                  simplify = TRUE)
+str_length(caat_seqs_all)              # Lengths are 139 and 148 respectivley for these two
+str_which(caat_seqs_all, tata_box)     # Searching for sequence that contains the "TATA box"
+promoter <- str_sub(caat_seqs_all[1])  # Naming this promoter
+promoter                               # Displaying promoter
+str_length(promoter)                   # Sequence length is the shorter 139 length seq
+```
+#### Part 2: Ants
+## Import the data
+```{r}
+ants <- read.csv(here("data","ants.csv"))
+ants
+```
+
+## Wrangle the data
+```{r}
+wrangled_ants <- ants %>% 
+  pivot_longer(names_to = "species", values_to = "abundance", matches("[:Upper:].+\\.[:lower:].+", ignore.case = FALSE)) %>% 
+  select(year, species, abundance)
+wrangled_ants
+```
+
+```{r}
+wrangle_ants %>% 
+  mutate(species = str_replace(species, "[:Upper:].{4}\\.[:lower:].{4}.", replacement))
+wrangled
 ```
 
