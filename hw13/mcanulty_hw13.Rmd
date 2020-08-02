@@ -31,4 +31,21 @@ DNA <- beta %>%                           # Saving changes
 
 DNA                                       # Displaying string to prove changes worked
 ```
+## Sequence analysis: find the promoter region
+## Counting non ACTG
+```{r}
+str_count(DNA,
+          "[^ACTG]")   # REGEX anything but
+```
+
+# Counting starting codon ATG
+```{r}
+str_count(DNA,
+          "ATG")
+```
+## Counting stop codon TGA or TAA
+```{r}
+str_count(DNA, 
+          "TGA|TAA")  # or
+```
 
