@@ -87,8 +87,24 @@ str_length(promoter)                   # Sequence length is the shorter 139 leng
 #### Part 2: Ants
 ## Import the data
 ```{r}
-ants <- read.csv(here("data","ants.csv"))
+ants<- read_csv(here("Data", "ants.csv"))
 ants
+```
+```{r}
+ants_data <- ants %>%
+pivot_longer(names_to="species",
+             values_to="abundance",
+             matches("[:upper:].+\\.[:lower:].+",
+                     ignore.case = FALSE)) %>% 
+  select(year,
+         species,
+         abundance)
+ants_data
+```
+
+```{r}
+ants_wrangled <- ants_data %>% mutate(species=str_replace(species,"([A-Z].{3}).+([a-z]{4})","\\1\\2"))
+ants_wrangled
 ```
 
 ## Wrangle the data
@@ -103,5 +119,55 @@ wrangled_ants
 wrangle_ants %>% 
   mutate(species = str_replace(species, "[:Upper:].{4}\\.[:lower:].{4}.", replacement))
 wrangled
+```
+
+#### Part 3: Featuring Phlox Flowers
+## Import and wrangle data
+```{r}
+flower_size <- read.csv(here("data",
+                             "flower_size.csv"))  # Importing Flower_size data   
+  
+flower_size_summary <- flower_size %>%
+  drop_na(Flower.number) %>%                      # Dropping nas in column Flower.number
+  select("Species",                               # Selecting "Species", "cor_length", "throat_width", renaming the latter two
+         "cor_length" = 
+           Corolla.length..cm.,
+         "throat_width" = 
+           Corolla.width.throat..cm.) %>% 
+  separate(Species,                               # Separating the species column into genus and species  
+           into = c("genus", 
+                    "species"), 
+           sep = " ") %>%                         # Denoting the deliminator is a space
+  group_by(genus, species) %>%                    # Grouping by genus and species
+  summarise("mean_length" = mean(cor_length),     # Creating summary for mean length, mean width, max length and max width
+            "mean_width" = mean(throat_width),
+            "max_length" = max(cor_length),
+            "max_width" = max(throat_width),      
+  .groups = "drop") %>%                           # Dropping groups 
+  na.omit()                                       # Dropping nas 
+```
+
+## Importing and wrangling the second data set
+```{r}
+pollinators_raw <- read.csv(here("data", 
+                                 "flower_pollinators.csv"))  # Importing data
+
+pollinators <- pollinators_raw %>%                 # Naming data
+  select(-(starts_with("Source") | Color)) %>%     # Removing "Source" and Color columns
+  filter(Pollinator != "") %>%                     # Filtering out NAs
+  separate(ï..Species,                             # Separating species into genus and species
+            into = c("genus",
+                     "species"),
+            sep = " ") %>% 
+  separate(Pollinator,
+           into = ("Syndrome"))                    # Separating primary and secondary pollinators
+
+pollinators
+```
+## Using inner_join to combine data sets
+```{r}
+phlox <- inner_join(flower_size_summary,
+                    pollinators)
+phlox
 ```
 
