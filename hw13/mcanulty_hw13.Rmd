@@ -92,18 +92,85 @@ ants
 ```
 
 ## Wrangle the data
+## Species and abundance
 ```{r}
-wrangled_ants <- ants %>% 
-  pivot_longer(names_to = "species", 
+ants_species <- ants %>% 
+  pivot_longer(names_to = "species",                     # pivoting data to spcecies and abundance 
                values_to = "abundance", 
-               matches("[:Upper:].+\\.[:lower:].+", 
-                       ignore.case = FALSE)) %>% 
-  select(year, 
+               matches("[[:upper:]].+\\.[[:lower:]].+",  # Grabbing capitalized Genus names seperated by a . then species   
+                       ignore.case = FALSE)) %>%         # Don't ignore case
+  select(year,                                           # Only displaying year, species, and abundance  
          species, 
          abundance)
-wrangled_ants
 ```
-`
+
+## Creating summary of species, converting species to CEP names, with total abundance
+```{r}
+ants_sum <- ants_species %>% 
+  mutate(species = 
+           str_replace(species,         # Changing species names to CEP names
+                             "(^[A-Z][a-z]{0,3}).*\\.([a-z]{1,4}).*",
+                             "\\1\\2")) %>% 
+  mutate(year = factor(year,            # Creating an ordered year factor
+                ordered = TRUE,
+                levels = c(2010,        # levels of 2010 and 2011
+                           2011))) %>% 
+  group_by(year,                        # Grouping by year and species 
+           species) %>% 
+  summarise(total_abundance =           # Summarizing with total abundance
+              sum(abundance),           # Adding abundances together
+            .groups = "drop")           # Dropping groups
+```
+# Cleveland plot of ants summary
+```{r}
+ants_sum %>% 
+  ggplot(mapping = 
+           aes(x = reorder(species,            # Reordering species and total_abundance and setting it to x
+                           total_abundance), 
+               y = total_abundance,            # Setting total_abundance to y axis   
+               group = species)) +             # grouping abundance
+  geom_line() +                                # Line graph layer 
+  geom_point(aes(shape =                       # Point layer setting years as different shapes at size 2
+                   year),
+             size = 2) +
+  coord_flip() +                               # Flipping the coordinates
+  labs(x = NULL,                               # Setting x-axis as NULL, y as Total Abundance  
+       y = "Total Abundance", 
+       shape = "Year") +                       # Changing plot title to "Year"
+  theme_minimal()                              # Simplifies plot
+```
+
+## Code for slope graph
+```{r}
+ants_sum %>%
+  filter(total_abundance>=30) %>% # Arbitrary value
+  ggplot(aes(x = year, y = total_abundance, group = species)) +
+  geom_line(color = "gray") +
+  geom_point() +
+  theme_classic() + 
+  geom_text(data = ants_sum %>%
+              filter(year == "2010",
+                     total_abundance >= 30),
+            aes(x = year,
+                y = total_abundance,
+                label = species,
+                fontface = "italic"),
+            hjust = 1.1) +
+  geom_text(data = ants_sum %>% 
+            filter(year == "2011",
+                      total_abundance >= 30),
+            aes(x = year,
+                y = total_abundance,
+                label = species,
+                fontface = "italic"),
+            hjust = -0.1) +
+  labs(x = NULL,
+       y = "Abundance") +
+  theme(legend.position = "none") + 
+  scale_x_discrete(expand =c(0.2, 0.02))
+```
+Almost every ant species decreased from 2011 to 2010 due to the burning.
+Floreprui went from the most populated down to the five others with more than 30 of abundance.
 
 #### Part 3: Featuring Phlox Flowers
 ## Import and wrangle data
@@ -123,10 +190,10 @@ flower_size_summary <- flower_size %>%
                     "species"), 
            sep = " ") %>%                         # Denoting the deliminator is a space
   group_by(genus, species) %>%                    # Grouping by genus and species
-  summarise("mean_length" = mean(cor_length),     # Creating summary for mean length, mean width, max length and max width
-            "mean_width" = mean(throat_width),
-            "max_length" = max(cor_length),
-            "max_width" = max(throat_width),      
+  summarise("mean_length" = mean(cor_length, na.rm = TRUE),     # Creating summary for mean length, mean width, max length and max width
+            "mean_width" = mean(throat_width, na.rm = TRUE),
+            "max_length" = max(cor_length, na.rm = TRUE),
+            "max_width" = max(throat_width, na.rm = TRUE),      
   .groups = "drop")                               # Dropping groups 
 ```
 
@@ -143,7 +210,7 @@ pollinators <- pollinators_raw %>%                 # Naming data
                      "species"),
             sep = " ") %>%  
   separate(Pollinator, 
-           into = "Syndrome", sep = " ")
+           into = "Syndrome", sep = "(,|) ")
 ```
 ## Using inner_join to combine data sets
 ```{r}
@@ -157,6 +224,46 @@ phlox
 phlox %>% 
   ggplot(mapping = aes(x = mean_length, 
                        y = mean_width, 
+                       color = Syndrome)) +    # Scatter plot of phlox
+           geom_point() +
+           labs(x = "Mean length",            # Renaming axes 
+                y = "Mean width")
+```
+## Fixing "bee" and "beetle
+```{r}
+p_1 <- phlox %>% 
+  mutate(Syndrome = 
+           str_replace(Syndrome,           # Search in Syndrome for pollinator that begins with be(any character) ends with e
+                       "(be.*e$)", 
+                       "\\1s")) 
+p_1 %>% 
+  ggplot(mapping = aes(x = 
+                         mean_length, 
+                       y = 
+                         mean_width, 
+                       color = Syndrome))+    # Scatter plot of phlox
+           geom_point() +
+           labs(x = "Mean length",            # Renaming axes 
+                y = "Mean width")
+```
+## Looking at low pollinator counts
+```{r}
+p_1 %>% 
+  group_by(Syndrome) %>% 
+  count(Syndrome)
+```
+## Creating other insects out of beetles and flies
+```{r}
+p_2 <- p_1 %>% 
+  mutate(Syndrome =
+           str_replace(Syndrome, 
+                       ".+l.?es", 
+                       "other insects"))
+p_2 %>% 
+  ggplot(mapping = aes(x = 
+                         mean_length, 
+                       y = 
+                         mean_width, 
                        color = Syndrome))+    # Scatter plot of phlox
            geom_point() +
            labs(x = "Mean length",            # Renaming axes 
@@ -164,4 +271,45 @@ phlox %>%
 ```
 
 
+## Making Mammal, grouping insects, capitalizing autogamous
+```{r}
+p_3 <- p_2 %>% 
+  mutate(syndrome_group = case_when(
+           Syndrome == "bat" ~ "Mammal",
+           Syndrome == "hummingbird" ~ "Bird",
+           Syndrome == "autogamous" ~ "Autogamous",
+           TRUE ~ "Insect"))
+
+p_3 %>%
+    ggplot(mapping = aes(x = 
+                         mean_length, 
+                       y = 
+                         mean_width, 
+                       color = syndrome_group))+    # Scatter plot of phlox
+           geom_point() +
+           labs(x = "Mean length",            # Renaming axes 
+                y = "Mean width",
+                color = "Syndrome")
+  
+ 
+```
+
+## gghighlight
+```{r}
+p_3 %>%
+    ggplot(mapping = aes(x = 
+                         mean_length, 
+                       y = 
+                         mean_width, 
+                       color = syndrome_group))+    # Scatter plot of phlox
+           geom_point() +
+           labs(x = "Mean length",                  # Renaming axes 
+                y = "Mean width",
+                color = "Syndrome") +
+           gghighlight(syndrome_group ==            # Using gghighlight to highlight Mammal and Bird
+                         "Mammal" | 
+                         syndrome_group == 
+                         "Bird", 
+                       use_direct_label = FALSE)    # Keeping Legend
+```
 
