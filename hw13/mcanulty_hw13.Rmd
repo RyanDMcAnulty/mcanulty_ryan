@@ -143,9 +143,7 @@ pollinators <- pollinators_raw %>%                 # Naming data
                      "species"),
             sep = " ") %>%  
   separate(Pollinator, 
-           into = c("Syndrome"))
-pollinators
-
+           into = "Syndrome", sep = " ")
 ```
 ## Using inner_join to combine data sets
 ```{r}
