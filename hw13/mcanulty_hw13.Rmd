@@ -313,3 +313,53 @@ p_3 %>%
                        use_direct_label = FALSE)    # Keeping Legend
 ```
 
+## Colors and themes
+```{r}
+p_3 %>%
+  ggplot()+
+  geom_point(aes(x = max_length,y = max_width,color = syndrome_group))+ #  scale_color_viridis_d(option = "viridis")
+  scale_color_brewer(type = "qual", 
+                     palette = "Dark2") +
+  labs(x = "Mean Length (cm)",y = "Mean Width (cm)",color = "Syndrome")
+```
+## Semo pallete
+```{r}
+# Custom color palette, using
+# Southeast Red, Gum Tree, Fountain, Copper
+semo_palette <-c("#C8102E", "#DBE245", "#71C5E8", "#B07C57")
+
+p_3 %>%
+  ggplot() +
+  geom_point(aes(x = mean_length,
+                 y = mean_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group)) +
+  scale_shape_manual(values =c(22:25)) +
+  #  scale_fill_brewer(palette = "Dark2")
+  #  scale_fill_viridis_d(option = "viridis")
+  scale_fill_manual(values = semo_palette) +
+  labs(x = "Mean Length (cm)",
+       y = "Mean Width (cm)",
+       shape = "Syndrome",
+       fill = "Syndrome")
+```
+## ggthemes
+```{r}
+p_3 %>%
+  ggplot() +
+  geom_point(aes(x = mean_length,
+                 y = mean_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 2) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Mean Length (cm)",
+       y = "Mean Width (cm)") +
+  theme_tufte() +
+  scale_shape_manual(values = c(22:25)) + 
+  scale_fill_brewer(palette = "Dark2") +
+  theme(axis.text = element_text(size = 10),
+        axis.title =element_text(size = 12))
+```
+
