@@ -1,5 +1,5 @@
 ---
-title: "HW12: Dates"
+title: "HW13: Strings and Things"
 author: "Ryan McAnulty"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_notebook
@@ -90,36 +90,20 @@ str_length(promoter)                   # Sequence length is the shorter 139 leng
 ants<- read_csv(here("Data", "ants.csv"))
 ants
 ```
-```{r}
-ants_data <- ants %>%
-pivot_longer(names_to="species",
-             values_to="abundance",
-             matches("[:upper:].+\\.[:lower:].+",
-                     ignore.case = FALSE)) %>% 
-  select(year,
-         species,
-         abundance)
-ants_data
-```
-
-```{r}
-ants_wrangled <- ants_data %>% mutate(species=str_replace(species,"([A-Z].{3}).+([a-z]{4})","\\1\\2"))
-ants_wrangled
-```
 
 ## Wrangle the data
 ```{r}
 wrangled_ants <- ants %>% 
-  pivot_longer(names_to = "species", values_to = "abundance", matches("[:Upper:].+\\.[:lower:].+", ignore.case = FALSE)) %>% 
-  select(year, species, abundance)
+  pivot_longer(names_to = "species", 
+               values_to = "abundance", 
+               matches("[:Upper:].+\\.[:lower:].+", 
+                       ignore.case = FALSE)) %>% 
+  select(year, 
+         species, 
+         abundance)
 wrangled_ants
 ```
-
-```{r}
-wrangle_ants %>% 
-  mutate(species = str_replace(species, "[:Upper:].{4}\\.[:lower:].{4}.", replacement))
-wrangled
-```
+`
 
 #### Part 3: Featuring Phlox Flowers
 ## Import and wrangle data
@@ -143,8 +127,7 @@ flower_size_summary <- flower_size %>%
             "mean_width" = mean(throat_width),
             "max_length" = max(cor_length),
             "max_width" = max(throat_width),      
-  .groups = "drop") %>%                           # Dropping groups 
-  na.omit()                                       # Dropping nas 
+  .groups = "drop")                               # Dropping groups 
 ```
 
 ## Importing and wrangling the second data set
@@ -158,11 +141,11 @@ pollinators <- pollinators_raw %>%                 # Naming data
   separate(ï..Species,                             # Separating species into genus and species
             into = c("genus",
                      "species"),
-            sep = " ") %>% 
-  separate(Pollinator,
-           into = ("Syndrome"))                    # Separating primary and secondary pollinators
-
+            sep = " ") %>%  
+  separate(Pollinator, 
+           into = c("Syndrome"))
 pollinators
+
 ```
 ## Using inner_join to combine data sets
 ```{r}
@@ -170,4 +153,17 @@ phlox <- inner_join(flower_size_summary,
                     pollinators)
 phlox
 ```
+
+## Plotting Part 3
+```{r}
+phlox %>% 
+  ggplot(mapping = aes(x = mean_length, 
+                       y = mean_width, 
+                       color = Syndrome))+    # Scatter plot of phlox
+           geom_point() +
+           labs(x = "Mean length",            # Renaming axes 
+                y = "Mean width")
+```
+
+
 
