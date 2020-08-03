@@ -61,6 +61,7 @@ str_count(DNA,
 caat_box <- "CCAAT"
 tata_box <- "CTATAA"
 ```
+
 ## Counting strings
 ```{r}
 str_count(DNA,  
@@ -120,6 +121,7 @@ ants_sum <- ants_species %>%
   summarise(total_abundance =           # Summarizing with total abundance
               sum(abundance),           # Adding abundances together
             .groups = "drop")           # Dropping groups
+ants_sum
 ```
 # Cleveland plot of ants summary
 ```{r}
@@ -195,6 +197,8 @@ flower_size_summary <- flower_size %>%
             "max_length" = max(cor_length, na.rm = TRUE),
             "max_width" = max(throat_width, na.rm = TRUE),      
   .groups = "drop")                               # Dropping groups 
+
+flower_size_summary
 ```
 
 ## Importing and wrangling the second data set
@@ -211,6 +215,7 @@ pollinators <- pollinators_raw %>%                 # Naming data
             sep = " ") %>%  
   separate(Pollinator, 
            into = "Syndrome", sep = "(,|) ")
+pollinators
 ```
 ## Using inner_join to combine data sets
 ```{r}
@@ -361,5 +366,90 @@ p_3 %>%
   scale_fill_brewer(palette = "Dark2") +
   theme(axis.text = element_text(size = 10),
         axis.title =element_text(size = 12))
+```
+## St. Louis Cadinals color palette 
+```{r}
+# Custom color palette, using
+# Navy, Cardinal Red, Yellow, White
+Cardinal_palette <-c("#0C2340", "#C41E3A", "#FEDB00", "#FFFFFF")
+
+p_3 %>%
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group)) +
+  scale_shape_manual(values =c(22:25)) +
+  #  scale_fill_viridis_d(option = "viridis")
+  scale_fill_manual(values = Cardinal_palette) +
+  labs(x = "Max Length (cm)",
+       y = "Max Width (cm)",
+       shape = "Syndrome",
+       fill = "Syndrome") + 
+  scale_shape_manual(values = c(22:25)) + 
+  theme(axis.text = element_text(size = 14),
+        axis.title =element_text(size = 14))
+```
+## Fallout New Vegas Color palette 
+```{r}
+# Custom color palette, using
+# darkest night, Round Tuit, Sticky Wicket, Mummy Glow
+New_vegas_palette <-c("#331111", "#665533", "#995533", "#DDCC66")
+
+p_3 %>%
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group)) +
+  scale_shape_manual(values =c(22:25)) +
+  scale_fill_manual(values = New_vegas_palette) +
+  labs(x = "Max Length (cm)",
+       y = "Max Width (cm)",
+       shape = "Syndrome",
+       fill = "Syndrome")
+```
+
+## Ugly plot
+```{r}
+p_3 %>%
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 10) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Max Length (cm)",
+       y = "Max Width (cm)") +
+  theme_tufte() +
+  scale_shape_manual(values = c(20:23)) + 
+  scale_fill_brewer(palette = "PiYG") +
+  theme(axis.text = element_text(size = 10),
+        axis.title =element_text(size = 12))
+```
+
+## Really good looking figure
+```{r}
+# Custom color palette, using
+# Red, Yellow, Green, Purple
+Rainbow_palette <-c("#ff0000", "#ffff00", "#008000", "#4b0082")
+
+p_3 %>%
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 4) +
+  scale_shape_manual(values =c(21:24)) +
+  scale_fill_manual(values = Rainbow_palette) +
+  labs(x = "Max Length (cm)",
+       y = "Max Width (cm)",
+       shape = "Syndrome",
+       fill = "Syndrome") +
+      theme(axis.text = element_text(size = 10),
+        axis.title =element_text(size = 10))
 ```
 
