@@ -186,7 +186,7 @@ skin_cancer <- skin_cancer_raw %>%
     State == "NorthDakota" ~ "North Dakota",
     State == "SouthDakota" ~ "South Dakota",
     State == "NewHampshire" ~ "New Hampshire",
-    State == "NewJersey" ~ "Nes Jersey",
+    State == "NewJersey" ~ "New Jersey",
     State == "NewMexico" ~ "New Mexico",
     State == "MewYork" ~ "New York", # Data has MewYork typo
     State == "RhodeIsland" ~ "Rhode Island",
@@ -262,11 +262,13 @@ ggplot(states_df) +
 lyme_disease_raw <- 
   read_csv(file = here::here("data","lyme_disease.csv"),
              skip = 1,
-             na = c("-"))
+             na = "-") %>% 
+  drop_na()
 
 lyme_disease <- lyme_disease_raw %>% 
   mutate(`2017` = `2017_Confirmed` + `2017_Probable`) %>% 
-  select(State:`2016`, `2017`) %>% 
+  select(-c("2017_Confirmed",
+            "2017_Probable")) %>% 
   pivot_longer("2007":"2017",
                names_to = "Year",
                values_to = "cases") %>% 
@@ -280,8 +282,10 @@ lyme_disease <- lyme_disease_raw %>%
 
 ## Merging data
 ```{r}
-lyme_disease <-left_join(lyme_disease, fips)
-states_df <-left_join(states_df, lyme_disease)
+lyme_disease <-left_join(lyme_disease,
+                         fips)
+states_df <-left_join(states_df,
+                      lyme_disease)
 ```
 ## Plot of my map
 ```{r}
@@ -376,80 +380,75 @@ base + geom_point(data = both_species,
 ## Distribution map: my map
 ```{r}
 # Global vars -------------------------------------------------------------# Restrict the map to the western US.
-min_long <- -126
+min_long <- -126        # Above, but in one big chunk and different seed  
 max_long <- -104
 min_lat  <-   31
 max_lat  <-   50
 
 set.seed(3926003)
-```
-
-## Bigfoot data
-```{r}
-# Bigfoot data ------------------------------------------------------------
-bigfoot <-read_csv(here::here("data", "bigfoot.csv"))
-bigfoot <- bigfoot %>%
-  filter(long >= min_long & long<=max_long, 
-         lat>=min_lat & lat<=max_lat) %>%
-  sample_n(300) %>%
-  mutate(name = "Gigantopithecus") %>%
-  dplyr::select(name, long, lat)
-```
-
-## Bear data
-```{r}
-# Bear data ---------------------------------------------------------------
-bears <- read_csv(here::here("data", "bears.csv"))
-
-both_species <- bind_rows(bigfoot, bears)
-
-head(both_species)
-```
-```{r}
-tail(both_species)
-```
-## Stamen Maps
-```{r}
+bigfoot_mine_raw <- read_csv(here::here("data",
+                                        "bigfoot.csv"))
+bigfoot_mine <- bigfoot_mine_raw %>% 
+  filter(long >= min_long & long <= max_long,
+         lat >= min_lat & lat<= max_lat) %>% 
+  sample_n(300) %>% 
+  mutate(name="Gigantopithecus") %>% 
+  dplyr::select(name,
+                long,
+                lat)
+bears <- read_csv(here::here("data",
+                             "bears.csv"))
+both_species <- bind_rows(bigfoot_mine,
+                          bears)
 base = get_stamenmap(bbox = c(min_long,
-                              min_lat,
-                              max_long,
-                              max_lat),
-                     zoom = 4,
-                     maptype = "terrain-background")
-
-ggmap(base)
-```
-
-## Bigfoot Map
-```{r}
-base <-ggmap(base)
-
-base + geom_point(data = bigfoot,
-                  aes(x = long,
-                      y = lat))
-```
-
-## Bears Map
-```{r}
-base + geom_point(data = bears,
-                  aes(x = long,
-                      y = lat))
-```
-
-## Both Species
-```{r}
-
-base + geom_point(data = both_species,
-                  aes(x = long,
-                      y = lat,
-                      shape = name,
-                      fill = name),
-                  size = 2) + 
-  scale_shape_manual(values =c(22:23)) +
+                          min_lat,
+                          max_long,
+                          max_lat),
+                   zoom = 4,
+                   maptype = "terrain-background")
+base_species <- ggmap(base)
+base_species + geom_point(data = both_species,
+                    aes(x = long,
+                        y = lat,
+                        shape = name,
+                        fill = name),
+                    size = 2)+
+  scale_shape_manual(values = c(22:23))+
   labs(x = "Longitude",
        y = "Latitude",
        fill = "Species",
        shape = "Species")
 ```
+
 #### Part 4: Bathymetry:  Due to Mr. Gates' contributions to the computing world.  Unable to complete.
+```{r}
+min_long <- -170
+max_long <- 164
+min_lat  <- -42
+max_lat  <- -8
+
+# This converts depth in km to depth in feet.
+# Necessary because bathymetry data will be in feet
+earthquakes <- quakes %>%
+  mutate(depth = depth * 3280.84)
+```
+
+```{r}
+memory.limit(24000)
+fiji <- getNOAA.bathy(lon1 = min_long,
+                      lon2 = max_long,
+                      lat1 = min_lat,
+                      lat2 = max_lat,
+                      antimeridian = TRUE,
+                      keep = TRUE)
+```
+
+```{r}
+# Could also just use autoplot() without the .bathy extension.
+autoplot.bathy(fiji,
+               geom = c("raster", 
+                       "contour"),
+               size = 0.1,
+               na.rm = TRUE)
+```
 
