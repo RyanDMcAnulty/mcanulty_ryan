@@ -20,6 +20,7 @@ library(ggmap)
 library(marmap)
 ```
 
+#### Part 1: Outline maps
 ## US Map data
 ```{r}
 # Outline of the 48 contiguous states
@@ -164,4 +165,321 @@ mo_map <-ggplot() +
 ```{r}
 us_map + mo_map + plot_layout(ncol = 2, widths = c(1.5, 1))
 ```
+#### Part 2: Choropleth maps
+## Importing skin cancer raw data
+```{r}
+skin_cancer_raw <- 
+  read_delim(file = here::here("data","skin_cancer.txt"),
+             delim = " ",
+             skip = 7,
+             trim_ws = TRUE)
+```
 
+## Wrangling the data
+```{r}
+skin_cancer <- skin_cancer_raw %>% 
+  filter(State != "Wash, D.C.") %>% 
+  mutate(State = case_when(
+    State == "NorthCarolina" ~ "North Carolina",
+    State == "SouthCarolina" ~ "South Carolina",
+    State == "NorthDakota" ~ "North Dakota",
+    State == "SouthDakota" ~ "South Dakota",
+    State == "NewHampshire" ~ "New Hampshire",
+    State == "NewJersey" ~ "Nes Jersey",
+    State == "NewMexico" ~ "New Mexico",
+    State == "MewYork" ~ "New York", # Data has MewYork typo
+    State == "RhodeIsland" ~ "Rhode Island",
+    State == "WestVirginia" ~ "West Virginia",
+    TRUE ~ State
+  ))
+```
+
+## Mean Mortality
+```{r}
+mean_mort <-mean(skin_cancer$Mort)
+
+skin_cancer_adj <- skin_cancer %>%
+  mutate(relative_mort = Mort-mean_mort)
+```
+
+## Lower 48
+```{r}
+# Used to trim Alaska, Hawaii, and territories from the shapefile.
+lower_48 <-c("Alabama","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming")
+```
+
+## States
+```{r}
+states <-st_read(here::here("data", "cb_2017_us_state_500k.shp"),
+                 stringsAsFactors = TRUE)
+```
+
+## States_df
+```{r}
+states_df <- states %>% 
+  dplyr::filter(NAME %in% lower_48)
+```
+
+## FIPS factor
+```{r}
+str(states_df$STATEFP)
+```
+##
+```{r}
+# Capture the FIPS levels from states_df
+# Use to factor the FIPS and state names in the next step.
+state_levels <-levels(states_df$STATEFP)
+name_levels <-levels(states_df$NAME)
+```
+
+## fips again
+```{r}
+fips <-read_csv(here::here("data", "state_fips.csv")) %>% 
+  select(-abbr) %>%
+  rename(STATEFP = FIPS) %>%
+  mutate(STATEFP =factor(STATEFP, levels = state_levels))
+```
+
+## Left Joins
+```{r}
+skin_cancer_adj <-left_join(skin_cancer_adj, fips)
+states_df <-left_join(states_df, skin_cancer_adj)
+```
+## Skin Cancer Mortality Map
+```{r}
+ggplot(states_df) +
+  geom_sf(aes(fill = relative_mort)) +
+  scale_fill_viridis_c(name = "Skin Cancer,\nRelative Mortality",
+                       option = "inferno") +
+  coord_sf(crs =st_crs(5070)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+## My Choropleth map
+```{r}
+lyme_disease_raw <- 
+  read_csv(file = here::here("data","lyme_disease.csv"),
+             skip = 1,
+             na = c("-"))
+
+lyme_disease <- lyme_disease_raw %>% 
+  mutate(`2017` = `2017_Confirmed` + `2017_Probable`) %>% 
+  select(State:`2016`, `2017`) %>% 
+  pivot_longer("2007":"2017",
+               names_to = "Year",
+               values_to = "cases") %>% 
+  group_by(State) %>% 
+  summarise(mean_cases = mean(cases),
+            log_mean = log10(mean_cases),
+            .groups = "drop")
+
+  lyme_disease
+```
+
+## Merging data
+```{r}
+lyme_disease <-left_join(lyme_disease, fips)
+states_df <-left_join(states_df, lyme_disease)
+```
+## Plot of my map
+```{r}
+ggplot(states_df) +
+  geom_sf(aes(fill = log_mean)) +
+  scale_fill_viridis_c(name = "Lyme Disease Mean \nCases by State",
+                       option = "cividis", labels = c("<1", "10", "100", "1000", "5000")) +
+  coord_sf(crs =st_crs(5070)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+#### Part 3: Dot distribution maps
+## Distribution of Gigantopithecus and Ursus
+```{r}
+# Global vars -------------------------------------------------------------# Restrict the map to the western US.
+min_long <- -126
+max_long <- -104
+min_lat  <-   31
+max_lat  <-   50
+
+set.seed(9618973)
+```
+
+## Bigfoot data
+```{r}
+# Bigfoot data ------------------------------------------------------------
+bigfoot <-read_csv(here::here("data", "bigfoot.csv"))
+bigfoot <- bigfoot %>%
+  filter(long >= min_long & long<=max_long, 
+         lat>=min_lat & lat<=max_lat) %>%
+  sample_n(300) %>%
+  mutate(name = "Gigantopithecus") %>%
+  dplyr::select(name, long, lat)
+```
+
+## Bear data
+```{r}
+# Bear data ---------------------------------------------------------------
+bears <- read_csv(here::here("data", "bears.csv"))
+
+both_species <- bind_rows(bigfoot, bears)
+
+head(both_species)
+```
+```{r}
+tail(both_species)
+```
+## Stamen Maps
+```{r}
+base = get_stamenmap(bbox = c(min_long,
+                              min_lat,
+                              max_long,
+                              max_lat),
+                     zoom = 4,
+                     maptype = "terrain-background")
+
+ggmap(base)
+```
+
+## Bigfoot Map
+```{r}
+base <-ggmap(base)
+
+base + geom_point(data = bigfoot,
+                  aes(x = long,
+                      y = lat))
+```
+
+## Bears Map
+```{r}
+base + geom_point(data = bears,
+                  aes(x = long,
+                      y = lat))
+```
+
+## Both Species
+```{r}
+base + geom_point(data = both_species,
+                  aes(x = long,
+                      y = lat,
+                      shape = name,
+                      fill = name),
+                  size = 2) + 
+  scale_shape_manual(values =c(22:23)) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       fill = "Species",
+       shape = "Species")
+```
+
+## Distribution map: my map
+```{r}
+# Global vars -------------------------------------------------------------# Restrict the map to the western US.
+min_long <- -126
+max_long <- -104
+min_lat  <-   31
+max_lat  <-   50
+
+set.seed(3926003)
+```
+
+## Bigfoot data
+```{r}
+# Bigfoot data ------------------------------------------------------------
+bigfoot <-read_csv(here::here("data", "bigfoot.csv"))
+bigfoot <- bigfoot %>%
+  filter(long >= min_long & long<=max_long, 
+         lat>=min_lat & lat<=max_lat) %>%
+  sample_n(300) %>%
+  mutate(name = "Gigantopithecus") %>%
+  dplyr::select(name, long, lat)
+```
+
+## Bear data
+```{r}
+# Bear data ---------------------------------------------------------------
+bears <- read_csv(here::here("data", "bears.csv"))
+
+both_species <- bind_rows(bigfoot, bears)
+
+head(both_species)
+```
+```{r}
+tail(both_species)
+```
+## Stamen Maps
+```{r}
+base = get_stamenmap(bbox = c(min_long,
+                              min_lat,
+                              max_long,
+                              max_lat),
+                     zoom = 4,
+                     maptype = "terrain-background")
+
+ggmap(base)
+```
+
+## Bigfoot Map
+```{r}
+base <-ggmap(base)
+
+base + geom_point(data = bigfoot,
+                  aes(x = long,
+                      y = lat))
+```
+
+## Bears Map
+```{r}
+base + geom_point(data = bears,
+                  aes(x = long,
+                      y = lat))
+```
+
+## Both Species
+```{r}
+
+base + geom_point(data = both_species,
+                  aes(x = long,
+                      y = lat,
+                      shape = name,
+                      fill = name),
+                  size = 2) + 
+  scale_shape_manual(values =c(22:23)) +
+  labs(x = "Longitude",
+       y = "Latitude",
+       fill = "Species",
+       shape = "Species")
+```
+#### Part 4: Bathymetry
+## Example: Fiji earthquakes
+## Variables and conversions
+```{r}
+min_long <- -170
+max_long <- 164
+min_lat  <- -42
+max_lat  <- -8
+
+# This converts depth in km to depth in feet.
+# Necessary because bathymetry data will be in feet
+earthquakes <- quakes %>% 
+  mutate(depth = depth*3280.84)
+```
+
+## Fiji
+```{r}
+fiji <- getNOAA.bathy(lon1 = min_long,
+                      lon2 = max_long,
+                      lat1 = min_lat,
+                      lat2 = max_lat,
+                      antimeridian = TRUE,
+                      keep = TRUE)
+```
+
+##
+```{r}
+# Could also just use autoplot() without the .bathy extension.
+autoplot.bathy(fiji,
+               geom =c("raster", "contour"),
+               size = 0.1,
+               na.rm = TRUE)
+```
