@@ -11,6 +11,7 @@ editor_options:
 ```{r}
 library(here)
 library(raster)
+library(rgdal)
 library(sf)
 library(tidyverse)
 library(ggthemes)
@@ -450,36 +451,5 @@ base + geom_point(data = both_species,
        fill = "Species",
        shape = "Species")
 ```
-#### Part 4: Bathymetry
-## Example: Fiji earthquakes
-## Variables and conversions
-```{r}
-min_long <- -170
-max_long <- 164
-min_lat  <- -42
-max_lat  <- -8
+#### Part 4: Bathymetry:  Due to Mr. Gates' contributions to the computing world.  Unable to complete.
 
-# This converts depth in km to depth in feet.
-# Necessary because bathymetry data will be in feet
-earthquakes <- quakes %>% 
-  mutate(depth = depth*3280.84)
-```
-
-## Fiji
-```{r}
-fiji <- getNOAA.bathy(lon1 = min_long,
-                      lon2 = max_long,
-                      lat1 = min_lat,
-                      lat2 = max_lat,
-                      antimeridian = TRUE,
-                      keep = TRUE)
-```
-
-##
-```{r}
-# Could also just use autoplot() without the .bathy extension.
-autoplot.bathy(fiji,
-               geom =c("raster", "contour"),
-               size = 0.1,
-               na.rm = TRUE)
-```
