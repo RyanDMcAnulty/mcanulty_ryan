@@ -26,11 +26,9 @@ library(marmap)
 ```{r}
 # Outline of the 48 contiguous states
 usa <-map_data(map = "state") # Tidyverse or ggplot2 must be loaded
-
 # Outline of just Missouri
 us_missouri <-map_data ( map = "state",
                          region = "missouri")
-
 # Outline of Alabama, Florida, Mississippi, and North Carolina
 us_other <-subset(x = usa,
                   subset = region %in% c("alabama",
@@ -112,7 +110,6 @@ us_map
 ```{r}
 missouri <- map_data("county", "missouri")
 mo_scott <- subset(missouri, subregion %in% c("scott"))
-
 mo_map <-ggplot() + 
   geom_polygon(data = missouri, aes(x=long, y = lat, group = group), fill = NA, color = "black") +
   geom_polygon(data = mo_scott,aes(x = long, y = lat, group = group), fill = "black") +
@@ -126,7 +123,7 @@ mo_map
 us_map + mo_map + plot_layout(ncol = 2, widths = c(1.5, 1))
 ```
 
-## My map US
+## My map US same as above
 ```{r}
 us_map <- ggplot() +
   geom_polygon(data = us_missouri,
@@ -146,13 +143,9 @@ us_map <- ggplot() +
 ## My map, Missouri, Cape Girardeau, Ripley, and Dallas counties
 ```{r}
 missouri <- map_data("county", "missouri")
-
 mo_cape <- subset(missouri, subregion %in% c("cape girardeau"))
-
 mo_ripley <- subset(missouri, subregion %in% c("ripley"))
-
 mo_dallas <- subset(missouri, subregion %in% c("dallas"))
-
 mo_map <-ggplot() + 
   geom_polygon(data = missouri, aes(x=long, y = lat, group = group), fill = NA, color = "black") +
   geom_polygon(data = mo_cape, aes(x = long, y = lat, group = group), fill = "black") +
@@ -198,7 +191,6 @@ skin_cancer <- skin_cancer_raw %>%
 ## Mean Mortality
 ```{r}
 mean_mort <-mean(skin_cancer$Mort)
-
 skin_cancer_adj <- skin_cancer %>%
   mutate(relative_mort = Mort-mean_mort)
 ```
@@ -264,19 +256,17 @@ lyme_disease_raw <-
              skip = 1,
              na = "-") %>% 
   drop_na()
-
 lyme_disease <- lyme_disease_raw %>% 
-  mutate(`2017` = `2017_Confirmed` + `2017_Probable`) %>% 
-  select(-c("2017_Confirmed",
+  mutate(`2017` = `2017_Confirmed` + `2017_Probable`) %>%   # Creating 2017 column
+  select(-c("2017_Confirmed",                               # Deselecting 2017_Confirmed and 2017_Probable
             "2017_Probable")) %>% 
-  pivot_longer("2007":"2017",
+  pivot_longer("2007":"2017",                               # Pivoting data to Year and Cases
                names_to = "Year",
                values_to = "cases") %>% 
   group_by(State) %>% 
-  summarise(mean_cases = mean(cases),
+  summarise(mean_cases = mean(cases),                       # Summarize with mean and log10(mean)
             log_mean = log10(mean_cases),
             .groups = "drop")
-
   lyme_disease
 ```
 
@@ -292,7 +282,7 @@ states_df <-left_join(states_df,
 ggplot(states_df) +
   geom_sf(aes(fill = log_mean)) +
   scale_fill_viridis_c(name = "Lyme Disease Mean \nCases by State",
-                       option = "cividis", labels = c("<1", "10", "100", "1000", "5000")) +
+                       option = "cividis", labels = c("<1", "10", "100", "1000", "5000")) +  # Changing labels.  For some reason I thought yellow was appropriate.
   coord_sf(crs =st_crs(5070)) +
   theme_bw() +
   theme(legend.position = "bottom")
@@ -306,7 +296,6 @@ min_long <- -126
 max_long <- -104
 min_lat  <-   31
 max_lat  <-   50
-
 set.seed(9618973)
 ```
 
@@ -326,9 +315,7 @@ bigfoot <- bigfoot %>%
 ```{r}
 # Bear data ---------------------------------------------------------------
 bears <- read_csv(here::here("data", "bears.csv"))
-
 both_species <- bind_rows(bigfoot, bears)
-
 head(both_species)
 ```
 ```{r}
@@ -342,14 +329,12 @@ base = get_stamenmap(bbox = c(min_long,
                               max_lat),
                      zoom = 4,
                      maptype = "terrain-background")
-
 ggmap(base)
 ```
 
 ## Bigfoot Map
 ```{r}
 base <-ggmap(base)
-
 base + geom_point(data = bigfoot,
                   aes(x = long,
                       y = lat))
@@ -384,7 +369,6 @@ min_long <- -126        # Above, but in one big chunk and different seed
 max_long <- -104
 min_lat  <-   31
 max_lat  <-   50
-
 set.seed(3926003)
 bigfoot_mine_raw <- read_csv(here::here("data",
                                         "bigfoot.csv"))
@@ -426,7 +410,6 @@ min_long <- -170
 max_long <- 164
 min_lat  <- -42
 max_lat  <- -8
-
 # This converts depth in km to depth in feet.
 # Necessary because bathymetry data will be in feet
 earthquakes <- quakes %>%
@@ -451,4 +434,3 @@ autoplot.bathy(fiji,
                size = 0.1,
                na.rm = TRUE)
 ```
-
