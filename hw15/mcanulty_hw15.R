@@ -172,8 +172,12 @@ MO_covid_SEMO %>%
   scale_x_date(date_labels = "%d %b")                  # Setting up scale
 
 
+# Plot 3 ------------------------------------------------------------------
 
-# Plot #4 -----------------------------------------------------------------
+# Just could not figure out how to do this one.  Ran out of time....
+
+
+# Plot 4 ------------------------------------------------------------------
 
 MO_daily_cases <- MO_covid_cases %>%            # Using Mo covid data from before
   group_by(date) %>% 
