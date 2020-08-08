@@ -88,7 +88,7 @@ SEMO_county_pop <- SEMO_raw %>%
 
 # Plot 1 ----------------------------------------------------
 covid_data_raw <- left_join(covid_cases,           # Joinging cases and deaths
-                               covid_deaths)
+                            covid_deaths)
 covid_region <- covid_data_raw %>% 
   filter(date >= dmy(first_MO_case)) %>%           # Tidying by region
   mutate(Region = case_when(
@@ -134,7 +134,7 @@ MO_covid_cases <- covid_cases %>%
   mutate(`County Name` = str_replace(`County Name`,
                                      " County$",""),    
          `County Name`= str_replace(`County Name`,      # Fixing county nomenclature
-                                   "^Jackson ","")) %>% 
+                                    "^Jackson ","")) %>% 
   group_by(`County Name`,                               # Grouping by County name and date
            date) %>% 
   summarise(total_confirmed = sum(cases,
@@ -147,8 +147,8 @@ SEMO_counties <- SEMO_county_pop %>%                    # Fixing county names
                                 "De Kalb",
                                 "DeKalb"),
          `County` = str_replace(`County`,
-                              "^Sainte ",
-                              "Ste\\. "),
+                                "^Sainte ",
+                                "Ste\\. "),
          `County` = str_replace(`County`,
                                 "^Saint ",
                                 "St\\. "),
@@ -172,41 +172,13 @@ MO_covid_SEMO %>%
   scale_x_date(date_labels = "%d %b")                  # Setting up scale
 
 
-# Plot 3 ------------------------------------------------------------------
-
-covid_confirmed_raw3 <- read_csv(here("data",
-                                     "covid_confirmed_usafacts.csv"))
-
-covid_cases_3 <- covid_confirmed_raw3 %>% 
-  pivot_longer(c(`1/22/20`:`7/31/20`),
-               names_to = "date",
-               values_to = "cases") %>%
-  mutate(date = mdy(date)) %>% 
-  filter(date%in%c(ymd("2020-04-01"):ymd("2020-04-30"),
-                 ymd("2020-07-01"):ymd("2020-07-30"))) %>% 
-  mutate(date = month(date))
-  group_by(State, date, cases) %>% 
-  summarise(total_cases = sum(cases)) %>% 
-  mutate(date = month(date))
-
-view(covid_cases_3)
-
-view(covid_cases_3)
-mutate(month = month(date)) %>%
-  group_by(State,`County Name`, month) %>%
-  summarise(total_cases_county = sum(cases,
-                                     na.rm = TRUE)) %>% 
-  mutate(rate_county = sum(total_cases_county))
-covid_cases_3
-
-## I just could not figure this one out and ran out of time. You win some....
 
 # Plot #4 -----------------------------------------------------------------
 
 MO_daily_cases <- MO_covid_cases %>%            # Using Mo covid data from before
   group_by(date) %>% 
   summarise(cases = sum(total_confirmed,        # Calculating daily cases in Missouri 
-                                na.rm=TRUE),
+                        na.rm=TRUE),
             .groups='drop') %>% 
   mutate(daily = new_cases(`cases`))            # Using function to calculate new daily cases
 
@@ -238,12 +210,6 @@ MO_daily_cases %>%                              # Plotting
            x = mdy("Jun 16 2020"),              # Adding in annotation date
            y = 228,
            label = "Missouri reopened\n16 June 2020", 
-           color = "#C8102E", 
-           fill = "C8102E") +
+           color = "#C8102E") +
   labs(x = NULL, 
        y = "Daily New Cases")                   # setting plot axes labels
-
-
-# Plot #5 -----------------------------------------------------------------
-
-
